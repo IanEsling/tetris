@@ -3,6 +3,7 @@ package shapes;
 import board.Board;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
+import org.junit.Test;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,9 +12,46 @@ import java.util.Map;
 
 /**
  */
-public class AbstractShapeTest {
+public abstract class AbstractShapeTest {
     Board board;
     List<Map<Integer, Integer>> populatedCells;
+
+    abstract Shape getNewShape();
+    abstract void populateNewShapeOnBoardCells();
+    abstract void populateFirstShapeAtBottomCells();
+    abstract void populateSecondShapeAtBottomCells();
+    abstract void populateOneRowDownCells();
+
+    @Test
+    public void moveShapeDownOneRowOnBoardTick() {
+        board.addNewShape(getNewShape());
+        board.tick();
+        populateOneRowDownCells();
+        assertBoardPopulation(populatedCells);
+    }
+
+    @Test
+    public void moveShapesAllWayDownBoard() {
+        board.addNewShape(getNewShape());
+        for (int i = 0; i < 50; i++) {
+            board.tick();
+        }
+        populateFirstShapeAtBottomCells();
+        assertBoardPopulation(populatedCells);
+        board.addNewShape(getNewShape());
+        for (int i = 0; i < 50; i++) {
+            board.tick();
+        }
+        populateSecondShapeAtBottomCells();
+        assertBoardPopulation(populatedCells);
+    }
+
+    @Test
+    public void putShapeOnBoard() {
+        board.addNewShape(getNewShape());
+        populateNewShapeOnBoardCells();
+        assertBoardPopulation(populatedCells);
+    }
 
     @Before
     public void createBoard() {
