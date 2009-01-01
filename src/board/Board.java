@@ -10,12 +10,13 @@ public class Board {
     public static int END_ROW = 3;
     public static int START_COL = 3;
     public static int END_COL = 6;
+    Shape movingShape;
 
     public Board(int rows, int columns) {
         cells = new int[rows][columns];
     }
 
-    void addNewShape(Shape shape) {
+    public void addNewShape(Shape shape) {
         int[][] shapeCells = shape.getCells();
         int shapeRow = 0;
         for (int row = START_ROW; row <= END_ROW; row++) {
@@ -26,23 +27,40 @@ public class Board {
             }
             shapeRow++;
         }
+        movingShape = shape;
     }
 
-    int[][] getCells() {
+    Shape getMovingShape() {
+        return movingShape;
+    }
+
+    public int[][] getCells() {
         return cells;
     }
 
-    void tick() {
+    public void tick() {
         for (int row = cells.length - 1; row >= 0; row--) {
             for (int col = cells[0].length - 1; col >= 0; col--) {
                 if (row == 0) cells[row][col] = 0;//top row, always will empty on tick
                 else if (row == cells.length - 1 && cells[row][col] == 1)
                     cells[row][col] = cells[row][col];//bottom row populated, stay populated
-                else if (cells[row][col]==0){//cell is empty
+                else if (cells[row][col] == 0) {//cell is empty
                     cells[row][col] = cells[row - 1][col];//move contents above into it
-                    cells[row-1][col]=0;//empty cell above
+                    cells[row - 1][col] = 0;//empty cell above
                 }
             }
+        }
+    }
+
+    class Cell{
+        boolean containsMovingShape;
+
+        void setMovingShapeHere(boolean movingShapeHere){
+            containsMovingShape = movingShapeHere;
+        }
+
+        boolean containsMovingShape(){
+            return containsMovingShape;
         }
     }
 }
