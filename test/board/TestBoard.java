@@ -1,7 +1,6 @@
 package board;
 
-import static junit.framework.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
+import static junit.framework.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import shapes.Shape;
@@ -20,17 +19,37 @@ public class TestBoard {
     public void boardKnowsShapeIsMoving() {
         Shape square = new Square();
         testee.addNewShape(square);
-        assertEquals(square, testee.getMovingShape());
-        for (int i = 0; i < 50; i++) {
+        assertNotNull("failed to set moving shape", testee.getMovingShape());
+        for (int i = 0; i < 27; i++) {
             testee.tick();
         }
-        assertNull(testee.getMovingShape());
+        assertNotNull("shape should still be moving", testee.getMovingShape());
+
+        testee.tick();
+        assertNull("shape shouldn't be moving anymore", testee.getMovingShape());
     }
 
     @Test
     public void cellsInBoard() {
-        assertEquals("testee cells width wrong", 30, testee.getCells().length);
-        assertEquals("testee cells height wrong", 10, testee.getCells()[0].length);
-        assertEquals("cells not initialised to zero", 0, testee.getCells()[0][0]);
+        assertEquals("testee cells height wrong", 29, maxCellHeight());
+        assertEquals("testee cells width wrong", 9, maxCellWidth());
+        assertNotNull("cells not initialised", testee.getCells().get(0));
+    }
+
+    private int maxCellHeight() {
+        int height = 0;
+        for (Board.Cell cell : testee.getCells()) {
+            if (cell.row > height) height = cell.row;
+        }
+        return height;
+    }
+
+
+    private int maxCellWidth() {
+        int width = 0;
+        for (Board.Cell cell : testee.getCells()) {
+            if (cell.column > width) width = cell.column;
+        }
+        return width;
     }
 }
