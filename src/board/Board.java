@@ -5,29 +5,22 @@ import shapes.Shape;
 /**
  */
 public class Board {
-    Integer[][] cells;
+    int[][] cells;
     public static int START_ROW = 0;
     public static int END_ROW = 3;
-    public static int START_COL = 4;
-    public static int END_COL = 7;
+    public static int START_COL = 3;
+    public static int END_COL = 6;
 
-    public Board(int x, int y) {
-        cells = new Integer[x][y];
-        for (int row = 0; row < x; row++) {
-            for (int col = 0; col < y; col++) {
-                cells[row][col] = 0;
-            }
-        }
+    public Board(int rows, int columns) {
+        cells = new int[rows][columns];
     }
 
     void addNewShape(Shape shape) {
-        Integer[][] shapeCells = shape.getCells();
-        int shapeRow=0;
-        for (int row = START_ROW;row<=END_ROW;row++)
-        {
+        int[][] shapeCells = shape.getCells();
+        int shapeRow = 0;
+        for (int row = START_ROW; row <= END_ROW; row++) {
             int shapeCol = 0;
-            for (int col = START_COL;col<=END_COL;col++)
-            {
+            for (int col = START_COL; col <= END_COL; col++) {
                 cells[row][col] = shapeCells[shapeRow][shapeCol];
                 shapeCol++;
             }
@@ -35,7 +28,21 @@ public class Board {
         }
     }
 
-    Integer[][] getCells() {
+    int[][] getCells() {
         return cells;
+    }
+
+    void tick() {
+        for (int row = cells.length - 1; row >= 0; row--) {
+            for (int col = cells[0].length - 1; col >= 0; col--) {
+                if (row == 0) cells[row][col] = 0;//top row, always will empty on tick
+                else if (row == cells.length - 1 && cells[row][col] == 1)
+                    cells[row][col] = cells[row][col];//bottom row populated, stay populated
+                else if (cells[row][col]==0){//cell is empty
+                    cells[row][col] = cells[row - 1][col];//move contents above into it
+                    cells[row-1][col]=0;//empty cell above
+                }
+            }
+        }
     }
 }
