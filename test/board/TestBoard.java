@@ -18,7 +18,7 @@ public class TestBoard {
     }
 
     @Test
-    public void moveShape() {
+    public void moveShapeAround() {
         testee.addNewShape(new LShape());
         List<Cell> startCells = testee.getMovingShape().shapeCells;
         testee.moveShapeToLeft();
@@ -41,8 +41,8 @@ public class TestBoard {
         testee.moveShapeToLeft();
         testee.moveShapeToLeft();
         testee.moveShapeToLeft();
-        assertShapeHasMoved(startCells, 3, -Board.START_COL-1);
-        for (int i=0;i<20;i++){
+        assertShapeHasMoved(startCells, 3, -Board.START_COL - 1);
+        for (int i = 0; i < 20; i++) {
             testee.moveShapeToRight();
         }
         assertShapeHasMoved(startCells, 3, 4);
@@ -53,14 +53,14 @@ public class TestBoard {
     private void assertShapeHasMoved(List<Cell> startCells, int rows, int columns) {
         List<Cell> newCells = testee.getMovingShape().shapeCells;
         assertEquals("start and new cells not same size", startCells.size(), newCells.size());
-        for (Cell cell : startCells){
-            assertTrue("testee doesn't contain new cell, rows:"+rows+", columns:"+columns+
-            " for cell: "+cell+".  Testee Cells: "+testee.getCells(),
-                    testee.getCells().contains(new Cell(cell.row+rows, cell.column+columns)));
-            assertTrue("shape not moved as expected, rows="+rows+",columns="+columns+
-                    ", newCells: "+newCells+
-                    ", startCells: "+startCells,                    
-                    newCells.contains(testee.getCell(cell.row+rows, cell.column+columns)));
+        for (Cell cell : startCells) {
+            assertTrue("testee doesn't contain new cell, rows:" + rows + ", columns:" + columns +
+                    " for cell: " + cell + ".  Testee Cells: " + testee.getCells(),
+                    testee.getCells().contains(new Cell(cell.row + rows, cell.column + columns)));
+            assertTrue("shape not moved as expected, rows=" + rows + ",columns=" + columns +
+                    ", newCells: " + newCells +
+                    ", startCells: " + startCells,
+                    newCells.contains(testee.getCell(cell.row + rows, cell.column + columns)));
         }
     }
 

@@ -38,7 +38,7 @@ public class Board {
     public void addNewShape(Shape shape) {
         int[][] shapeCells = shape.getCells();
         int shapeRow = 0;
-        movingShape = new MovingShape(this);
+        movingShape = new MovingShape();
         for (int row = START_ROW; row <= END_ROW; row++) {
             int shapeCol = 0;
             for (int col = START_COL; col <= END_COL; col++) {
@@ -80,15 +80,19 @@ public class Board {
         return false;
     }
 
+    public int getColumns() {
+        return columns;
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
     class MovingShape {
-        List<Cell> shapeCells, boardCells;
-        Board board;
+        List<Cell> shapeCells;
 
-        MovingShape(Board board) {
+        MovingShape() {
             shapeCells = new ArrayList<Cell>();
-            boardCells = board.getCells();
-            this.board = board;
-
         }
 
         void isPresentInCell(Cell cell) {
@@ -104,9 +108,9 @@ public class Board {
             move(0, -1);
         }
 
-        boolean canMove(int columns){
-            for (Cell cell : shapeCells){
-                if (cell.column==board.columns-1 && columns > 0)//cell is on right edge and attempt to move right
+        boolean canMove(int columns) {
+            for (Cell cell : shapeCells) {
+                if (cell.column == getColumns() - 1 && columns > 0)//cell is on right edge and attempt to move right
                     return false;
                 if (cell.column == 0 && columns < 0)//cell is on left edge and attempt to move left
                     return false;
@@ -131,7 +135,7 @@ public class Board {
 
         private void getBoardCellsForNewPosition(List<Cell> newShapeCells, List<Cell> newCells) {
             for (Cell cell : newCells) {
-                Cell newCell = boardCells.get(boardCells.indexOf(cell));
+                Cell newCell = cells.get(cells.indexOf(cell));
                 newCell.setPopulated(true);
                 newShapeCells.add(newCell);
             }
@@ -145,7 +149,6 @@ public class Board {
 
         private void getCellsForNewPosition(int rows, int columns, List<Cell> newCells) {
             for (Cell cell : shapeCells) {
-                if (cell.row == board.rows - 1) rows = 0;//cell is at bottom
                 newCells.add(new Cell(cell.row + rows, cell.column + columns));
             }
         }
