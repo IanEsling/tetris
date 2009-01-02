@@ -27,6 +27,14 @@ public class Board {
         }
     }
 
+    public void moveShapeToRight() {
+        movingShape.moveToRight();
+    }
+
+    public void moveShapeToLeft() {
+        movingShape.moveToLeft();
+    }
+
     public void addNewShape(Shape shape) {
         int[][] shapeCells = shape.getCells();
         int shapeRow = 0;
@@ -55,15 +63,19 @@ public class Board {
         return cells.get(cells.indexOf(new Cell(row, column)));
     }
 
+    public Cell getNewCell(int row, int column){
+        return new Cell(row, column);
+    }
+
     public void tick() {
         if (movingShape != null) {
-            movingShape.moveDownOneRow();
-            if (movingShapeCannotMoveAnymore()) movingShape = null;
+            movingShape.move(1, 0);
+            if (movingShapeCannotMoveDownAnymore()) movingShape = null;
         }
 
     }
 
-    private boolean movingShapeCannotMoveAnymore() {
+    private boolean movingShapeCannotMoveDownAnymore() {
         List<Cell> lowestCells = movingShape.cellsInLowestRow();
         for (Cell cell : lowestCells) {
             if (cell.row == rows - 1) return true;
@@ -75,10 +87,12 @@ public class Board {
 
     class MovingShape {
         List<Cell> shapeCells, boardCells;
+        Board board;
 
         MovingShape(Board board) {
             shapeCells = new ArrayList<Cell>();
             boardCells = board.getCells();
+            this.board = board;
 
         }
 
@@ -87,11 +101,31 @@ public class Board {
             cell.setPopulated(true);
         }
 
-        void moveDownOneRow() {
+        void moveToRight() {
+            move(0, 1);
+        }
+
+        void moveToLeft() {
+            move(0, -1);
+        }
+
+        boolean canMove(int columns){
+            for (Cell cell : shapeCells){
+                if (cell.column==board.columns-1 && columns > 0)//cell is on right edge and attempt to move right
+                    return false;
+                if (cell.column == 0 && columns < 0)//cell is on left edge and attempt to move left
+                    return false;
+            }
+            return true;
+        }
+
+        void move(int rows, int columns) {
             List<Cell> newShapeCells = new ArrayList<Cell>();
             List<Cell> newCells = new ArrayList<Cell>();
             for (Cell cell : shapeCells) {
-                newCells.add(new Cell(cell.row + 1, cell.column));
+                if (cell.row == board.rows - 1) rows = 0;
+                if (!canMove(columns)) columns = 0;
+                newCells.add(new Cell(cell.row + rows, cell.column + columns));
             }
 
             for (Cell cell : shapeCells) {

@@ -3,8 +3,10 @@ package board;
 import static junit.framework.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import shapes.Shape;
+import shapes.LShape;
 import shapes.Square;
+
+import java.util.List;
 
 public class TestBoard {
 
@@ -16,11 +18,55 @@ public class TestBoard {
     }
 
     @Test
+    public void moveShape() {
+        testee.addNewShape(new LShape());
+        List<Board.Cell> startCells = testee.getMovingShape().shapeCells;
+        testee.moveShapeToLeft();
+        assertShapeHasMoved(startCells, 0, -1);
+        testee.moveShapeToLeft();
+        assertShapeHasMoved(startCells, 0, -2);
+        testee.tick();
+        assertShapeHasMoved(startCells, 1, -2);
+        testee.moveShapeToRight();
+        assertShapeHasMoved(startCells, 1, -1);
+        testee.tick();
+        assertShapeHasMoved(startCells, 2, -1);
+        testee.moveShapeToRight();
+        testee.moveShapeToRight();
+        assertShapeHasMoved(startCells, 2, 1);
+        testee.tick();
+        testee.moveShapeToLeft();
+        testee.moveShapeToLeft();
+        testee.moveShapeToLeft();
+        testee.moveShapeToLeft();
+        testee.moveShapeToLeft();
+        testee.moveShapeToLeft();
+        assertShapeHasMoved(startCells, 3, -Board.START_COL-1);
+        for (int i=0;i<20;i++){
+            testee.moveShapeToRight();
+        }
+        assertShapeHasMoved(startCells, 3, 4);
+    }
+
+    private void assertShapeHasMoved(List<Board.Cell> startCells, int rows, int columns) {
+        List<Board.Cell> newCells = testee.getMovingShape().shapeCells;
+        assertEquals("start and new cells not same size", startCells.size(), newCells.size());
+        for (Board.Cell cell : startCells){
+            assertTrue("testee doesn't contain new cell, rows:"+rows+", columns:"+columns+
+            " for cell: "+cell+".  Testee Cells: "+testee.getCells(),
+                    testee.getCells().contains(testee.getNewCell(cell.row+rows, cell.column+columns)));
+            assertTrue("shape not moved as expected, rows="+rows+",columns="+columns+
+                    ", newCells: "+newCells+
+                    ", startCells: "+startCells,                    
+                    newCells.contains(testee.getCell(cell.row+rows, cell.column+columns)));
+        }
+    }
+
+    @Test
     public void boardKnowsShapeIsMoving() {
-        Shape square = new Square();
-        testee.addNewShape(square);
+        testee.addNewShape(new Square());
         assertNotNull("failed to set moving shape", testee.getMovingShape());
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 27; i++) {//relies on square being 2 cells tall
             testee.tick();
         }
         assertNotNull("shape should still be moving", testee.getMovingShape());

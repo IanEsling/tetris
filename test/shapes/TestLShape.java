@@ -1,12 +1,6 @@
 package shapes;
 
 import board.Board;
-import org.junit.Test;
-import org.junit.Ignore;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -24,7 +18,7 @@ public class TestLShape extends AbstractShapeTest {
         populatedCells.add(map(Board.START_ROW + 2, Board.START_COL + 1));
         populatedCells.add(map(Board.START_ROW + 2, Board.START_COL + 2));
     }
-    
+
     void populateSecondShapeAtBottomCells() {
         populatedCells.add(map(24, Board.START_COL + 1));
         populatedCells.add(map(25, Board.START_COL + 1));
