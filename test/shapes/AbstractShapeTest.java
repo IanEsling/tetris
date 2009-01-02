@@ -1,6 +1,7 @@
 package shapes;
 
 import board.Board;
+import board.Cell;
 import static org.junit.Assert.assertEquals;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public abstract class AbstractShapeTest {
     }
 
     protected void assertBoardPopulation(List<Map<Integer, Integer>> populatedCells) {
-        for (Board.Cell cell : board.getCells()) {
+        for (Cell cell : board.getCells()) {
             if (cellPopulated(populatedCells, cell.row, cell.column))
                 assertBoardCellHasShape(cell.row, cell.column);
             else

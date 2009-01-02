@@ -20,7 +20,7 @@ public class TestBoard {
     @Test
     public void moveShape() {
         testee.addNewShape(new LShape());
-        List<Board.Cell> startCells = testee.getMovingShape().shapeCells;
+        List<Cell> startCells = testee.getMovingShape().shapeCells;
         testee.moveShapeToLeft();
         assertShapeHasMoved(startCells, 0, -1);
         testee.moveShapeToLeft();
@@ -46,15 +46,17 @@ public class TestBoard {
             testee.moveShapeToRight();
         }
         assertShapeHasMoved(startCells, 3, 4);
+        testee.tick();
+        assertShapeHasMoved(startCells, 4, 4);
     }
 
-    private void assertShapeHasMoved(List<Board.Cell> startCells, int rows, int columns) {
-        List<Board.Cell> newCells = testee.getMovingShape().shapeCells;
+    private void assertShapeHasMoved(List<Cell> startCells, int rows, int columns) {
+        List<Cell> newCells = testee.getMovingShape().shapeCells;
         assertEquals("start and new cells not same size", startCells.size(), newCells.size());
-        for (Board.Cell cell : startCells){
+        for (Cell cell : startCells){
             assertTrue("testee doesn't contain new cell, rows:"+rows+", columns:"+columns+
             " for cell: "+cell+".  Testee Cells: "+testee.getCells(),
-                    testee.getCells().contains(testee.getNewCell(cell.row+rows, cell.column+columns)));
+                    testee.getCells().contains(new Cell(cell.row+rows, cell.column+columns)));
             assertTrue("shape not moved as expected, rows="+rows+",columns="+columns+
                     ", newCells: "+newCells+
                     ", startCells: "+startCells,                    
@@ -84,16 +86,15 @@ public class TestBoard {
 
     private int maxCellHeight() {
         int height = 0;
-        for (Board.Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getCells()) {
             if (cell.row > height) height = cell.row;
         }
         return height;
     }
 
-
     private int maxCellWidth() {
         int width = 0;
-        for (Board.Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getCells()) {
             if (cell.column > width) width = cell.column;
         }
         return width;

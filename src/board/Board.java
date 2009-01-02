@@ -63,16 +63,11 @@ public class Board {
         return cells.get(cells.indexOf(new Cell(row, column)));
     }
 
-    public Cell getNewCell(int row, int column){
-        return new Cell(row, column);
-    }
-
     public void tick() {
         if (movingShape != null) {
             movingShape.move(1, 0);
             if (movingShapeCannotMoveDownAnymore()) movingShape = null;
         }
-
     }
 
     private boolean movingShapeCannotMoveDownAnymore() {
@@ -122,80 +117,57 @@ public class Board {
         void move(int rows, int columns) {
             List<Cell> newShapeCells = new ArrayList<Cell>();
             List<Cell> newCells = new ArrayList<Cell>();
-            for (Cell cell : shapeCells) {
-                if (cell.row == board.rows - 1) rows = 0;
-                if (!canMove(columns)) columns = 0;
-                newCells.add(new Cell(cell.row + rows, cell.column + columns));
-            }
 
-            for (Cell cell : shapeCells) {
-                cell.setPopulated(false);
-            }
+            if (!canMove(columns)) columns = 0;//trying to move left or right when on the edge
 
+            getCellsForNewPosition(rows, columns, newCells);
+
+            setCurrentCellsToUnpopulated();
+
+            getBoardCellsForNewPosition(newShapeCells, newCells);
+
+            shapeCells = newShapeCells;
+        }
+
+        private void getBoardCellsForNewPosition(List<Cell> newShapeCells, List<Cell> newCells) {
             for (Cell cell : newCells) {
                 Cell newCell = boardCells.get(boardCells.indexOf(cell));
                 newCell.setPopulated(true);
                 newShapeCells.add(newCell);
             }
+        }
 
-            shapeCells = newShapeCells;
+        private void setCurrentCellsToUnpopulated() {
+            for (Cell cell : shapeCells) {
+                cell.setPopulated(false);
+            }
+        }
+
+        private void getCellsForNewPosition(int rows, int columns, List<Cell> newCells) {
+            for (Cell cell : shapeCells) {
+                if (cell.row == board.rows - 1) rows = 0;//cell is at bottom
+                newCells.add(new Cell(cell.row + rows, cell.column + columns));
+            }
         }
 
         List<Cell> cellsInLowestRow() {
-            int row = 0;
-            for (Cell cell : shapeCells) {
-                if (cell.row > row) row = cell.row;
-            }
+            return cellsInRow(getLowestRowNumberShapeHasCellIn());
+        }
+
+        private List<Cell> cellsInRow(int row) {
             List<Cell> lowestCells = new ArrayList<Cell>();
             for (Cell cell : shapeCells) {
                 if (cell.row == row) lowestCells.add(cell);
             }
             return lowestCells;
         }
-    }
 
-    public class Cell {
-        public int row;
-        public int column;
-        boolean populated;
-
-        Cell(int row, int column) {
-            this.row = row;
-            this.column = column;
-        }
-
-        void setPopulated(boolean populated) {
-            this.populated = populated;
-        }
-
-        public boolean isPopulated() {
-            return populated;
-        }
-
-        @SuppressWarnings({"RedundantIfStatement"})
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Cell cell = (Cell) o;
-
-            if (column != cell.column) return false;
-            if (row != cell.row) return false;
-
-            return true;
-        }
-
-        @Override
-        public int hashCode() {
-            int result = row;
-            result = 31 * result + column;
-            return result;
-        }
-
-        @Override
-        public String toString() {
-            return "[" + row + "," + column + ": " + (isPopulated() ? "populated" : "empty") + "]";
+        private int getLowestRowNumberShapeHasCellIn() {
+            int row = 0;
+            for (Cell cell : shapeCells) {
+                if (cell.row > row) row = cell.row;
+            }
+            return row;
         }
     }
 }
