@@ -17,10 +17,7 @@ public class TestXLShape extends AbstractShapeTest {
      */
     @Test
     public void notBottomCellsCausingFallToStop(){
-        board.addNewShape(getNewShape());
-        for (int i = 0; i < 50; i++) {
-            board.tick();
-        }
+        addShapeAndTick(50);
         populateFirstShapeAtBottomCells();
         assertBoardPopulation(populatedCells);
         board.addNewShape(getNewShape());
@@ -32,11 +29,9 @@ public class TestXLShape extends AbstractShapeTest {
         assertBoardPopulation(populatedCells);
     }
 
-
     Shape getNewShape() {
         return new XLShape();
     }
-
 
     void populateSecondShapeHookedOntoFirst() {
         populatedCells.add(map(26, Board.START_COL));

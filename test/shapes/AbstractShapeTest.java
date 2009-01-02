@@ -33,18 +33,19 @@ public abstract class AbstractShapeTest {
 
     @Test
     public void moveShapesAllWayDownBoard() {
-        board.addNewShape(getNewShape());
-        for (int i = 0; i < 50; i++) {
-            board.tick();
-        }
+        addShapeAndTick(50);
         populateFirstShapeAtBottomCells();
         assertBoardPopulation(populatedCells);
-        board.addNewShape(getNewShape());
-        for (int i = 0; i < 50; i++) {
-            board.tick();
-        }
+        addShapeAndTick(50);
         populateSecondShapeAtBottomCells();
         assertBoardPopulation(populatedCells);
+    }
+
+    void addShapeAndTick(int ticks) {
+        board.addNewShape(getNewShape());
+        for (int i = 0; i < ticks; i++) {
+            board.tick();
+        }
     }
 
     @Test
