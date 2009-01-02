@@ -71,10 +71,14 @@ public class Board {
     }
 
     private boolean movingShapeCannotMoveDownAnymore() {
-        List<Cell> lowestCells = movingShape.cellsInLowestRow();
-        for (Cell cell : lowestCells) {
+        for (Cell cell : movingShape.shapeCells) {
             if (cell.row == rows - 1) return true;
-            if (cells.get(cells.indexOf(new Cell(cell.row + 1, cell.column))).isPopulated()) return true;
+            if ((cells.get(cells.indexOf(new Cell(cell.row + 1, cell.column))).isPopulated())//cell below has something in it
+                    &&
+                    //it's not because it's one of it's own cells
+                    (!movingShape.shapeCells.contains(new Cell(cell.row + 1, cell.column)))
+                    )
+                return true;
         }
 
         return false;
@@ -151,26 +155,6 @@ public class Board {
             for (Cell cell : shapeCells) {
                 newCells.add(new Cell(cell.row + rows, cell.column + columns));
             }
-        }
-
-        List<Cell> cellsInLowestRow() {
-            return cellsInRow(getLowestRowNumberShapeHasCellIn());
-        }
-
-        private List<Cell> cellsInRow(int row) {
-            List<Cell> lowestCells = new ArrayList<Cell>();
-            for (Cell cell : shapeCells) {
-                if (cell.row == row) lowestCells.add(cell);
-            }
-            return lowestCells;
-        }
-
-        private int getLowestRowNumberShapeHasCellIn() {
-            int row = 0;
-            for (Cell cell : shapeCells) {
-                if (cell.row > row) row = cell.row;
-            }
-            return row;
         }
     }
 }
