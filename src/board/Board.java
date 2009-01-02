@@ -43,7 +43,7 @@ public class Board {
             int shapeCol = 0;
             for (int col = START_COL; col <= END_COL; col++) {
                 if (shapeCells[shapeRow][shapeCol] == 1) {
-                    movingShape.isPresentInCell(cells.get(cells.indexOf(new Cell(shapeRow, shapeCol + START_COL))));
+                    movingShape.isPresentInCell(cellAt(shapeRow, shapeCol + START_COL));
                 }
                 shapeCol++;
             }
@@ -60,6 +60,10 @@ public class Board {
     }
 
     public Cell getCell(int row, int column) {
+        return cellAt(row, column);
+    }
+
+    private Cell cellAt(int row, int column) {
         return cells.get(cells.indexOf(new Cell(row, column)));
     }
 
@@ -73,7 +77,7 @@ public class Board {
     private boolean movingShapeCannotMoveDownAnymore() {
         for (Cell cell : movingShape.shapeCells) {
             if (cell.row == rows - 1) return true;
-            if ((cells.get(cells.indexOf(new Cell(cell.row + 1, cell.column))).isPopulated())//cell below has something in it
+            if ((cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
                     &&
                     //it's not because it's one of it's own cells
                     (!movingShape.shapeCells.contains(new Cell(cell.row + 1, cell.column)))
@@ -123,26 +127,22 @@ public class Board {
         }
 
         void move(int rows, int columns) {
-            List<Cell> newShapeCells = new ArrayList<Cell>();
-            List<Cell> newCells = new ArrayList<Cell>();
 
             if (!canMove(columns)) columns = 0;//trying to move left or right when on the edge
 
-            getCellsForNewPosition(rows, columns, newCells);
-
             setCurrentCellsToUnpopulated();
 
-            getBoardCellsForNewPosition(newShapeCells, newCells);
-
-            shapeCells = newShapeCells;
+            shapeCells = getBoardCellsForNewPosition(getNewPositions(rows, columns));
         }
 
-        private void getBoardCellsForNewPosition(List<Cell> newShapeCells, List<Cell> newCells) {
+        private List<Cell> getBoardCellsForNewPosition(List<Cell> newCells) {
+            List<Cell> newShapeCells = new ArrayList<Cell>();
             for (Cell cell : newCells) {
                 Cell newCell = cells.get(cells.indexOf(cell));
                 newCell.setPopulated(true);
                 newShapeCells.add(newCell);
             }
+            return newShapeCells;
         }
 
         private void setCurrentCellsToUnpopulated() {
@@ -151,10 +151,12 @@ public class Board {
             }
         }
 
-        private void getCellsForNewPosition(int rows, int columns, List<Cell> newCells) {
+        private List<Cell> getNewPositions(int rows, int columns) {
+            List<Cell> newCells = new ArrayList<Cell>();
             for (Cell cell : shapeCells) {
                 newCells.add(new Cell(cell.row + rows, cell.column + columns));
             }
+            return newCells;
         }
     }
 }
