@@ -1,7 +1,9 @@
 package shapes;
 
 import board.Board;
+import board.Cell;
 import org.junit.Test;
+import static shapes.ShapeTestUtils.assertBoardPopulation;
 
 
 /**
@@ -16,17 +18,17 @@ public class TestXLShape extends AbstractShapeTest {
              X
      */
     @Test
-    public void notBottomCellsCausingFallToStop(){
+    public void notBottomCellsCausingFallToStop() {
         addShapeAndTick(50);
         populateFirstShapeAtBottomCells();
-        assertBoardPopulation(populatedCells);
+        assertBoardPopulation(board, populatedCells);
         board.addNewShape(getNewShape());
         board.moveShapeToLeft();
         for (int i = 0; i < 50; i++) {
             board.tick();
         }
         populateSecondShapeHookedOntoFirst();
-        assertBoardPopulation(populatedCells);
+        assertBoardPopulation(board, populatedCells);
     }
 
     Shape getNewShape() {
@@ -34,37 +36,37 @@ public class TestXLShape extends AbstractShapeTest {
     }
 
     void populateSecondShapeHookedOntoFirst() {
-        populatedCells.add(map(26, Board.START_COL));
-        populatedCells.add(map(26, Board.START_COL + 1));
-        populatedCells.add(map(27, Board.START_COL));
-        populatedCells.add(map(28, Board.START_COL));
+        populatedCells.add(new Cell(26, Board.START_COL));
+        populatedCells.add(new Cell(26, Board.START_COL + 1));
+        populatedCells.add(new Cell(27, Board.START_COL));
+        populatedCells.add(new Cell(28, Board.START_COL));
     }
 
     void populateNewShapeOnBoardCells() {
-        populatedCells.add(map(Board.START_ROW, Board.START_COL + 1));
-        populatedCells.add(map(Board.START_ROW, Board.START_COL + 2));
-        populatedCells.add(map(Board.START_ROW + 1, Board.START_COL + 1));
-        populatedCells.add(map(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
     }
 
     void populateSecondShapeAtBottomCells() {
-        populatedCells.add(map(24, Board.START_COL + 1));
-        populatedCells.add(map(24, Board.START_COL + 2));
-        populatedCells.add(map(25, Board.START_COL + 1));
-        populatedCells.add(map(26, Board.START_COL + 1));
+        populatedCells.add(new Cell(24, Board.START_COL + 1));
+        populatedCells.add(new Cell(24, Board.START_COL + 2));
+        populatedCells.add(new Cell(25, Board.START_COL + 1));
+        populatedCells.add(new Cell(26, Board.START_COL + 1));
     }
 
     void populateFirstShapeAtBottomCells() {
-        populatedCells.add(map(27, Board.START_COL + 1));
-        populatedCells.add(map(27, Board.START_COL + 2));
-        populatedCells.add(map(28, Board.START_COL + 1));
-        populatedCells.add(map(29, Board.START_COL + 1));
+        populatedCells.add(new Cell(27, Board.START_COL + 1));
+        populatedCells.add(new Cell(27, Board.START_COL + 2));
+        populatedCells.add(new Cell(28, Board.START_COL + 1));
+        populatedCells.add(new Cell(29, Board.START_COL + 1));
     }
 
     void populateOneRowDownCells() {
-        populatedCells.add(map(Board.START_ROW + 1, Board.START_COL + 1));
-        populatedCells.add(map(Board.START_ROW + 1, Board.START_COL + 2));
-        populatedCells.add(map(Board.START_ROW + 2, Board.START_COL + 1));
-        populatedCells.add(map(Board.START_ROW + 3, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
     }
 }

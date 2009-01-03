@@ -20,7 +20,7 @@ public class TestBoard {
     @Test
     public void moveShapeAround() {
         testee.addNewShape(new LShape());
-        List<Cell> startCells = testee.getMovingShape().shapeCells;
+        List<Cell> startCells = testee.getMovingShape().listOfCells();
         testee.moveShapeToLeft();
         assertShapeHasMoved(startCells, 0, -1);
         testee.moveShapeToLeft();
@@ -51,7 +51,7 @@ public class TestBoard {
     }
 
     private void assertShapeHasMoved(List<Cell> startCells, int rows, int columns) {
-        List<Cell> newCells = testee.getMovingShape().shapeCells;
+        List<Cell> newCells = testee.getMovingShape().listOfCells();
         assertEquals("start and new cells not same size", startCells.size(), newCells.size());
         for (Cell cell : startCells) {
             assertTrue("testee doesn't contain new cell, rows:" + rows + ", columns:" + columns +

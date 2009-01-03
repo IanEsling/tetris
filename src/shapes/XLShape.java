@@ -8,7 +8,7 @@ public class XLShape extends Shape {
              X
      */
     @Override
-    void setShapeCells() {
+    public void setShapeCells() {
         cells[0][1] = 1;
         cells[0][2] = 1;
         cells[1][1] = 1;

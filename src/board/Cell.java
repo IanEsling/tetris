@@ -7,7 +7,7 @@ public class Cell {
     public int column;
     boolean populated;
 
-    Cell(int row, int column) {
+    public Cell(int row, int column) {
         this.row = row;
         this.column = column;
     }

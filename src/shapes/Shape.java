@@ -4,14 +4,14 @@ package shapes;
  */
 public abstract class Shape {
 
-    int[][] cells;
+    public int[][] cells;
 
-    Shape(){
+    public Shape(){
         cells = new int[4][4];
         setShapeCells();
     }
 
-    abstract void setShapeCells();
+    public abstract void setShapeCells();
 
     public int[][] getCells(){
         return cells;
