@@ -11,31 +11,40 @@ import static shapes.ShapeTestUtils.assertBoardPopulation;
 public class TestLShape extends AbstractShapeTest {
 
     @Test
-    public void rotateOnceToRight() {
+    public void clockwiseRotations() {
         board.addNewShape(getNewShape());
         board.tick();
-        board.rotateShapeRight();
-        populateFirstRightRotationCells();
+        board.rotateShapeClockwise();
+        populateFirstClockwiseRotationCells();
+        assertBoardPopulation(board, populatedCells);
+        board.rotateShapeClockwise();
+        populateSecondClockwiseRotationCells();
+        assertBoardPopulation(board, populatedCells);
+        board.rotateShapeClockwise();
+        populateThirdClockwiseRotationCells();
+        assertBoardPopulation(board, populatedCells);
+        board.rotateShapeClockwise();
+        populateFourthClockwiseRotationCells();
         assertBoardPopulation(board, populatedCells);
     }
 
     @Test
-    public void rightRotations() {
+    public void antiClockwiseRotations() {
         board.addNewShape(getNewShape());
         board.tick();
-        board.rotateShapeRight();
-        populateFirstRightRotationCells();
+        board.rotateShapeAntiClockwise();
+        populateFirstAntiClockwiseRotationCells();
         assertBoardPopulation(board, populatedCells);
-        board.rotateShapeRight();
-        populateSecondRightRotationCells();
+        board.rotateShapeAntiClockwise();
+        populateSecondAntiClockwiseRotationCells();
         assertBoardPopulation(board, populatedCells);
-        board.rotateShapeRight();
+        board.rotateShapeAntiClockwise();
         board.tick();
-        populateThirdRightRotationCells();
+        populateThirdAntiClockwiseRotationCells();
         assertBoardPopulation(board, populatedCells);
         board.tick();
-        board.rotateShapeRight();
-        populateFourthRightRotationCells();
+        board.rotateShapeAntiClockwise();
+        populateFourthAntiClockwiseRotationCells();
         assertBoardPopulation(board, populatedCells);
     }
 
@@ -45,7 +54,7 @@ public class TestLShape extends AbstractShapeTest {
            -X--        -XX-
            ----        ----
     */
-    private void populateFourthRightRotationCells() {
+    private void populateFourthAntiClockwiseRotationCells() {
         populatedCells.clear();
         populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 4, Board.START_COL + 1));
@@ -59,7 +68,7 @@ public class TestLShape extends AbstractShapeTest {
            --X-        -X--
            --X-        ----
     */
-    private void populateThirdRightRotationCells() {
+    private void populateThirdAntiClockwiseRotationCells() {
         populatedCells.clear();
         populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 2));
@@ -73,7 +82,7 @@ public class TestLShape extends AbstractShapeTest {
            XXX-        --X-
            ----        --X-
     */
-    private void populateSecondRightRotationCells() {
+    private void populateSecondAntiClockwiseRotationCells() {
         populatedCells.clear();
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
@@ -87,13 +96,67 @@ public class TestLShape extends AbstractShapeTest {
            -X--        XXX-
            -XX-        ----
     */
-    private void populateFirstRightRotationCells() {
+    private void populateFirstAntiClockwiseRotationCells() {
         populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL));
         populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 2));
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
     }
 
+    /*
+           ----        -X--
+           --X-    >   -X--
+           XXX-        -XX-
+           ----        ----
+    */
+    private void populateFourthClockwiseRotationCells() {
+        populatedCells.clear();
+        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 2));
+    }
+
+    /*
+           ----        ----
+           -XX-    >   --X-
+           --X-        XXX-
+           --X-        ----
+    */
+    private void populateThirdClockwiseRotationCells() {
+        populatedCells.clear();
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 2));
+    }
+
+    /*
+           ----        ----
+           -XXX    >   -XX-
+           -X--        --X-
+           ----        --X-
+    */
+    private void populateSecondClockwiseRotationCells() {
+        populatedCells.clear();
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 4, Board.START_COL + 2));
+    }
+
+    /*
+           ----        ----
+           -X--    >   -XXX
+           -X--        -X--
+           -XX-        ----
+    */
+    private void populateFirstClockwiseRotationCells() {
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 3));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
+    }
 
     LShape getNewShape() {
         return new LShape();

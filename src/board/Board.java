@@ -72,8 +72,12 @@ public class Board {
         return false;
     }
 
-    public void rotateShapeRight() {
-        movingShape.rotate();
+    public void rotateShapeClockwise(){
+        movingShape.rotateClockwise();
+    }
+
+    public void rotateShapeAntiClockwise() {
+        movingShape.rotateAntiClockwise();
     }
 
     class MovingShape {
@@ -129,28 +133,10 @@ public class Board {
             }
         }
 
-        private List<Cell> getBoardCellsForNewPosition(List<Cell> newCells) {
-            List<Cell> newShapeCells = new ArrayList<Cell>();
-            for (Cell cell : newCells) {
-                Cell newCell = cells.get(cells.indexOf(cell));
-                newCell.setPopulated(true);
-                newShapeCells.add(newCell);
-            }
-            return newShapeCells;
-        }
-
         private void setCurrentCellsToUnpopulated() {
             for (Cell cell : listOfCells()) {
                 cell.setPopulated(false);
             }
-        }
-
-        private List<Cell> getNewPositions(int rows, int columns) {
-            List<Cell> newCells = new ArrayList<Cell>();
-            for (Cell cell : listOfCells()) {
-                newCells.add(new Cell(cell.row + rows, cell.column + columns));
-            }
-            return newCells;
         }
 
         public List<Cell> listOfCells() {
@@ -164,7 +150,27 @@ public class Board {
             return cellList;
         }
 
-        public void rotate() {
+        public void rotateClockwise(){
+            Cell[][] newShapeCells = new Cell[4][4];
+            int rowCount = 0;
+            for (Cell[] row : shapeCells) {
+                int columnCount = 0;
+                for (int column = shapeCells[0].length - 1; column >= 0; column--) {
+                    if (shapeCells[rowCount][column] != null) {
+                        Cell oldCell = shapeCells[rowCount][column];
+                        Cell newCell = cellAt(oldCell.row + column - rowCount, oldCell.column + columnCount - rowCount);
+                        newShapeCells[shapeCells.length-1-columnCount][shapeCells.length-1-rowCount] = newCell;
+                    }
+                    columnCount++;
+                }
+                rowCount++;
+            }
+            setAllCells(shapeCells, false);
+            setAllCells(newShapeCells, true);
+            shapeCells = newShapeCells;
+        }
+
+        public void rotateAntiClockwise() {
             Cell[][] newShapeCells = new Cell[4][4];
             int rowCount = 0;
             for (Cell[] row : shapeCells) {

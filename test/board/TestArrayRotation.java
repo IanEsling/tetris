@@ -120,7 +120,8 @@ public class TestArrayRotation {
             for (int col = matrix.length - 1; col >= 0; col--) {
                 if (matrix[rowCount][col] != null) {
                     Point oldPoint = matrix[rowCount][col];
-                    newMatrix[matrix.length - 1 - columnCount][matrix.length - 1 - rowCount] = p(oldPoint.x + col - rowCount, oldPoint.y + columnCount - rowCount);
+                    newMatrix[matrix.length - 1 - columnCount][matrix.length - 1 - rowCount] =
+                            p(oldPoint.x + col - rowCount, oldPoint.y + columnCount - rowCount);
                 }
                 columnCount++;
             }
