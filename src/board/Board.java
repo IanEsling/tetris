@@ -18,8 +18,14 @@ public class Board {
     protected MovingShape movingShape;
 
     enum Rotation {
-        Clockwise,
-        AntiClockwise
+        Clockwise {void rotate(Shape shape) {
+            shape.rotateClockwise();
+        }},
+        AntiClockwise {void rotate(Shape shape) {
+            shape.rotateAntiClockwise();
+        }};
+
+        abstract void rotate(Shape shape);
     }
 
     public Board(int rows, int columns) {
@@ -168,45 +174,51 @@ public class Board {
         }
 
         public void rotate(Rotation rotation) {
-            Cell[][] newShapeCells = rotateCells(rotation);
+            setNewShapeCells(rotateCells(rotation));
+        }
+
+        private void setNewShapeCells(Cell[][] newShapeCells) {
             setAllCells(shapeCells, false);
             setAllCells(newShapeCells, true);
             shapeCells = newShapeCells;
         }
 
         private Cell[][] rotateCells(Rotation rotation) {
-            if (Rotation.AntiClockwise == rotation)
-                getShape().rotateAntiClockwise();
-            else
-                getShape().rotateClockwise();
+            rotation.rotate(getShape());
 
             return mapNewShapeToBoardCells();
         }
 
         private Cell[][] mapNewShapeToBoardCells() {
+            return newShapeCells(startingRow(shapeCells), startingColumn(shapeCells));
+        }
+
+        private Cell[][] newShapeCells(int startRow, int startCol) {
             Cell[][] newShapeCells = new Cell[4][4];
-            int startRow = startX(shapeCells);
-            int startCol = startY(shapeCells);
             for (int row = 0; row < getShape().getCells().length; row++) {
                 for (int col = 0; col < getShape().getCells()[0].length; col++) {
-                    newShapeCells[row][col] = getShape().getCells()[row][col] == 0 ? null : cellAt(startRow + row, startCol + col);
+                    newShapeCells[row][col] =
+                            getShape().getCells()[row][col] == 0 ?
+                                    null :
+                                    cellAt(startRow + row, startCol + col);
                 }
             }
             return newShapeCells;
         }
 
-        private int startY(Cell[][] matrix) {
-            for (Cell[] aMatrix : matrix) {
+        private int startingColumn(Cell[][] matrix) {
+            for (Cell[] row : matrix) {
                 for (int col = 0; col < matrix[0].length; col++) {
-                    if (aMatrix[col] != null) {
-                        return aMatrix[col].column - col;
+                    if (row[col] != null) {
+                        return row[col].column - col;
                     }
                 }
             }
+            //fail fast, fail big
             throw new RuntimeException();
         }
 
-        private int startX(Cell[][] matrix) {
+        private int startingRow(Cell[][] matrix) {
             for (int row = 0; row < matrix.length; row++) {
                 for (int col = 0; col < matrix[0].length; col++) {
                     if (matrix[row][col] != null) {
@@ -214,6 +226,7 @@ public class Board {
                     }
                 }
             }
+            //fail fast, fail big
             throw new RuntimeException();
         }
     }
