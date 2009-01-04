@@ -10,7 +10,8 @@ public abstract class AbstractRotator implements Rotator {
         this.matrix = matrix;
     }
 
-    public int[][] rotateMatrix() {
+    @SuppressWarnings({"ManualArrayCopy"})
+    public void rotateMatrix() {
         int[][] newMatrix = new int[4][4];
         int rowCount = 0;
         for (int[] row : matrix) {
@@ -21,7 +22,11 @@ public abstract class AbstractRotator implements Rotator {
             }
             rowCount++;
         }
-        return newMatrix;
+        for (int row = 0;row<matrix.length;row++){
+            for (int col = 0;col<matrix[0].length;col++){
+                matrix[row][col] = newMatrix[row][col];
+            }
+        }
     }
 
     public abstract void rotate(int[][] newMatrix, int rowCount, int columnCount, int col);
