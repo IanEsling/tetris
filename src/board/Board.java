@@ -1,6 +1,7 @@
 package board;
 
 import shapes.Shape;
+import shapes.Square;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +39,7 @@ public class Board {
     public void addNewShape(Shape shape) {
         int[][] shapeCells = shape.getCells();
         int shapeRow = 0;
-        movingShape = new MovingShape();
+        movingShape = new MovingShape(shape);
         for (int row = START_ROW; row <= END_ROW; row++) {
             int shapeCol = 0;
             for (int col = START_COL; col <= END_COL; col++) {
@@ -54,7 +55,7 @@ public class Board {
     public void tick() {
         if (movingShape != null) {
             movingShape.move(1, 0);
-            if (movingShapeCannotMoveDownAnymore()) movingShape = null;
+            if (movingShapeCannotMoveDownAnymore()) addNewShape(new Square());
         }
     }
 
@@ -83,9 +84,15 @@ public class Board {
     class MovingShape {
 
         Cell[][] shapeCells;
+        Shape shape;
 
-        MovingShape() {
+        MovingShape(Shape shape) {
+            this.shape = shape;
             shapeCells = new Cell[4][4];
+        }
+
+        public Shape getShape(){
+            return shape;
         }
 
         void isPresentInCell(Cell cell) {

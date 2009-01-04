@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import shapes.LShape;
 import shapes.Square;
+import shapes.Shape;
 
 import java.util.List;
 
@@ -15,6 +16,19 @@ public class TestBoard {
     @Before
     public void createBoard() {
         testee = new Board(30, 10);//30 rows, 10 columns
+    }
+
+    @Test
+    public void addNewShapeWhenMovingShapeStops(){
+        Shape originalShape = new Square();
+        testee.addNewShape(originalShape);
+        for (int i = 0;i<27;i++){
+        testee.tick();
+        }
+        assertEquals("moving shape not original", originalShape, testee.getMovingShape().getShape());
+        testee.tick();
+        assertNotNull("moving shape is null", testee.getMovingShape());
+        assertNotSame("still moving original shape", testee.getMovingShape().getShape(), originalShape);
     }
 
     @Test
@@ -66,7 +80,8 @@ public class TestBoard {
 
     @Test
     public void boardKnowsShapeIsMoving() {
-        testee.addNewShape(new Square());
+        Shape movingShape = new Square();
+        testee.addNewShape(movingShape);
         assertNotNull("failed to set moving shape", testee.getMovingShape());
         for (int i = 0; i < 27; i++) {//relies on square being 2 cells tall
             testee.tick();
@@ -74,7 +89,7 @@ public class TestBoard {
         assertNotNull("shape should still be moving", testee.getMovingShape());
 
         testee.tick();
-        assertNull("shape shouldn't be moving anymore", testee.getMovingShape());
+        assertNotSame("shape shouldn't be moving anymore", movingShape, testee.getMovingShape());
     }
 
     @Test
