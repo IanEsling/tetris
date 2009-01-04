@@ -1,6 +1,5 @@
 package board;
 
-import shapes.RandomShapeGenerationException;
 import shapes.RandomShapeGenerator;
 import shapes.Shape;
 
@@ -17,6 +16,11 @@ public class Board {
     public static int START_COL = 3;
     public static int END_COL = 6;
     protected MovingShape movingShape;
+
+    enum Rotation {
+        Clockwise,
+        AntiClockwise
+    }
 
     public Board(int rows, int columns) {
         this.rows = rows;
@@ -45,7 +49,7 @@ public class Board {
             int shapeCol = 0;
             for (int col = START_COL; col <= END_COL; col++) {
                 if (shapeCells[shapeRow][shapeCol] == 1) {
-                    movingShape.isPresentInCell(cellAt(row, col));
+                    movingShape.shapeIsInThisCell(cellAt(row, col));
                 }
                 shapeCol++;
             }
@@ -61,12 +65,7 @@ public class Board {
     }
 
     protected void addNewShapeAtRandom() {
-        try {
-            addNewShape(RandomShapeGenerator.getNewShapeAtRandom());
-        }
-        catch (RandomShapeGenerationException e) {
-            throw new RuntimeException(e);
-        }
+        addNewShape(RandomShapeGenerator.getNewShapeAtRandom());
     }
 
     private boolean movingShapeCannotMoveDownAnymore() {
@@ -83,11 +82,11 @@ public class Board {
     }
 
     public void rotateShapeClockwise() {
-        movingShape.rotateClockwise();
+        movingShape.rotate(Rotation.Clockwise);
     }
 
     public void rotateShapeAntiClockwise() {
-        movingShape.rotateAntiClockwise();
+        movingShape.rotate(Rotation.AntiClockwise);
     }
 
     class MovingShape {
@@ -104,7 +103,7 @@ public class Board {
             return shape;
         }
 
-        void isPresentInCell(Cell cell) {
+        void shapeIsInThisCell(Cell cell) {
             shapeCells[cell.row][cell.column - START_COL] = cell;
             cell.setPopulated(true);
         }
@@ -119,9 +118,12 @@ public class Board {
 
         boolean canMove(int columns) {
             for (Cell cell : listOfCells()) {
-                if (cell.column == getColumns() - 1 && columns > 0)//cell is on right edge and attempt to move right
+                //cell is on right edge and attempt to move right
+                if (cell.column == getColumns() - 1 && columns > 0)
                     return false;
-                if (cell.column == 0 && columns < 0)//cell is on left edge and attempt to move left
+
+                //cell is on left edge and attempt to move left
+                if (cell.column == 0 && columns < 0)
                     return false;
             }
             return true;
@@ -166,44 +168,40 @@ public class Board {
             return cellList;
         }
 
-        public void rotateClockwise() {
+        public void rotate(Rotation rotation) {
             Cell[][] newShapeCells = new Cell[4][4];
-            int rowCount = 0;
-            for (Cell[] row : shapeCells) {
-                int columnCount = 0;
-                for (int column = shapeCells[0].length - 1; column >= 0; column--) {
-                    if (shapeCells[rowCount][column] != null) {
-                        Cell oldCell = shapeCells[rowCount][column];
-                        Cell newCell = cellAt(oldCell.row + column - rowCount, oldCell.column + columnCount - rowCount);
-                        newShapeCells[shapeCells.length - 1 - columnCount][shapeCells.length - 1 - rowCount] = newCell;
-                    }
-                    columnCount++;
-                }
-                rowCount++;
-            }
+            rotateCells(rotation, newShapeCells);
             setAllCells(shapeCells, false);
             setAllCells(newShapeCells, true);
             shapeCells = newShapeCells;
         }
 
-        public void rotateAntiClockwise() {
-            Cell[][] newShapeCells = new Cell[4][4];
+        private void rotateCells(Rotation rotation, Cell[][] newShapeCells) {
             int rowCount = 0;
             for (Cell[] row : shapeCells) {
                 int columnCount = 0;
                 for (int column = shapeCells[0].length - 1; column >= 0; column--) {
                     if (shapeCells[rowCount][column] != null) {
-                        Cell oldCell = shapeCells[rowCount][column];
-                        Cell newCell = cellAt(oldCell.row - (rowCount - columnCount), oldCell.column - (column - rowCount));
-                        newShapeCells[columnCount][rowCount] = newCell;
+                        rotate(newShapeCells, rowCount, columnCount, column, rotation);
                     }
                     columnCount++;
                 }
                 rowCount++;
             }
-            setAllCells(shapeCells, false);
-            setAllCells(newShapeCells, true);
-            shapeCells = newShapeCells;
+        }
+
+        private void rotate(Cell[][] newShapeCells, int rowCount, int columnCount, int column, Rotation rotation) {
+            Cell oldCell = shapeCells[rowCount][column];
+
+            if (rotation == Rotation.Clockwise) {
+                Cell newCell = cellAt(oldCell.row + column - rowCount, oldCell.column + columnCount - rowCount);
+                newShapeCells[shapeCells.length - 1 - columnCount][shapeCells.length - 1 - rowCount] = newCell;
+            }
+
+            if (rotation == Rotation.AntiClockwise) {
+                Cell newCell = cellAt(oldCell.row - (rowCount - columnCount), oldCell.column - (column - rowCount));
+                newShapeCells[columnCount][rowCount] = newCell;
+            }
         }
     }
 

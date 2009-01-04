@@ -6,13 +6,16 @@ import java.util.Random;
  */
 public class RandomShapeGenerator {
 
-    public static Shape getNewShapeAtRandom() throws RandomShapeGenerationException {
+    enum Shapes {
+        square{Shape getShape(){return new Square();}},
+        l{Shape getShape(){return new LShape();}},
+        xl {Shape getShape(){return new XLShape();}};
+
+        abstract Shape getShape();
+    }
+
+    public static Shape getNewShapeAtRandom() {
         Integer number = new Random().nextInt(3);
-        switch(number){
-            case 0:return new Square();
-            case 1:return new LShape();
-            case 2:return new XLShape();
-        }
-        throw new RandomShapeGenerationException(number);
+        return Shapes.values()[number].getShape();
     }
 }

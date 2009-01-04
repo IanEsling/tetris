@@ -1,6 +1,6 @@
 package shapes;
 
-import static junit.framework.Assert.assertFalse;
+import static junit.framework.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -11,26 +11,20 @@ import java.util.Map;
  */
 public class TestRandomShapeGenerator {
 
-    RandomShapeGenerator testee;
     Map<Shape, Integer> shapeCount;
-
-    @Before
-    public void createGenerator() {
-        testee = new RandomShapeGenerator();
-    }
 
     @Before
     public void shapeCounter() {
         shapeCount = new HashMap<Shape, Integer>();
-        shapeCount.put(new Square(), 0);
-        shapeCount.put(new LShape(), 0);
-        shapeCount.put(new XLShape(), 0);
+        for (RandomShapeGenerator.Shapes shape : RandomShapeGenerator.Shapes.values()){
+            shapeCount.put(shape.getShape(), 0);
+        }
     }
 
     @Test
-    public void randomShapeGeneration() throws RandomShapeGenerationException {
+    public void randomShapeGeneration() {
         for (int i = 0; i < 1000; i++) {
-            Shape newShape = testee.getNewShapeAtRandom();
+            Shape newShape = RandomShapeGenerator.getNewShapeAtRandom();
             for (Shape shape : shapeCount.keySet()) {
                 if (newShape.getClass().getName().equals(shape.getClass().getName())) {
                     Integer count = shapeCount.get(shape);
@@ -40,6 +34,9 @@ public class TestRandomShapeGenerator {
                 }
             }
         }
+        //for a visual check that it looks sensible
         System.out.println(shapeCount.toString());
+        //just make sure we've not missed any
+        assertFalse(shapeCount.containsValue(0));
     }
 }

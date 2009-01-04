@@ -1,21 +1,18 @@
 package board;
 
 import static org.junit.Assert.assertArrayEquals;
-import org.junit.Before;
 import org.junit.Test;
 
 import java.util.Arrays;
 
+import shapes.Rotator;
+import shapes.ClockwiseRotator;
+import shapes.AntiClockwiseRotator;
+
 /**
  */
+@SuppressWarnings({"UnusedDeclaration"})
 public class TestArrayRotation {
-
-    Board board;
-
-    @Before
-    public void setUpBoard() {
-        board = new Board(30, 10);
-    }
 
     @Test
     public void basicRotateClockwise() {
@@ -34,17 +31,8 @@ public class TestArrayRotation {
     }
 
     private int[][] rotateClockwise(int[][] matrix) {
-        int[][] newMatrix = new int[4][4];
-        int rowCount = 0;
-        for (int[] row : matrix) {
-            int columnCount = 0;
-            for (int col = matrix.length - 1; col >= 0; col--) {
-                newMatrix[matrix.length - 1 - columnCount][matrix.length - 1 - rowCount] = matrix[rowCount][col];
-                columnCount++;
-            }
-            rowCount++;
-        }
-        return newMatrix;
+        Rotator rotator = new ClockwiseRotator(matrix);
+        return rotator.rotateMatrix();
     }
 
     @Test
@@ -81,35 +69,49 @@ public class TestArrayRotation {
     }
 
     private int[][] rotateAntiClockwise(int[][] matrix) {
-        int[][] newMatrix = new int[4][4];
-        int rowCount = 0;
-        for (int[] row : matrix) {
-            int columnCount = 0;
-            for (int col = matrix.length - 1; col >= 0; col--) {
-                newMatrix[columnCount][rowCount] = matrix[rowCount][col];
-                columnCount++;
-            }
-            rowCount++;
-        }
-        return newMatrix;
+        Rotator rotator = new AntiClockwiseRotator(matrix);
+        return rotator.rotateMatrix();
     }
 
     private Point[][] rotateAntiClockwise(Point[][] matrix) {
-        Point[][] newMatrix = new Point[4][4];
-        int rowCount = 0;
-        for (Point[] row : matrix) {
-            int columnCount = 0;
-            for (int col = matrix.length - 1; col >= 0; col--) {
-                if (matrix[rowCount][col] != null) {
-                    Point oldPoint = matrix[rowCount][col];
-                    newMatrix[columnCount][rowCount] = p(oldPoint.x - (rowCount - columnCount), oldPoint.y - (col - rowCount));
-
-                }
-                columnCount++;
+        int[][] temp = new int[4][4];
+        for (int row = 0; row < temp.length; row++) {
+            for (int col = 0; col < temp[0].length; col++) {
+                temp[row][col] = matrix[row][col] == null ? 0 : 1;
             }
-            rowCount++;
         }
-        return newMatrix;
+        Rotator rotator = new AntiClockwiseRotator(temp);
+        temp = rotator.rotateMatrix();
+        int startRow = startX(matrix);
+        int startCol = startY(matrix);
+        for (int row = 0; row < temp.length; row++) {
+            for (int col = 0; col < temp[0].length; col++) {
+                matrix[row][col] = temp[row][col] == 0 ? null : p(startRow + row, startCol + col);
+            }
+        }
+        return matrix;
+    }
+
+    private int startY(Point[][] matrix) {
+        for (Point[] aMatrix : matrix) {
+            for (int col = 0; col < matrix[0].length; col++) {
+                if (aMatrix[col] != null) {
+                    return aMatrix[col].y - col;
+                }
+            }
+        }
+        throw new RuntimeException();
+    }
+
+    private int startX(Point[][] matrix) {
+        for (int row = 0; row < matrix.length; row++) {
+            for (int col = 0; col < matrix[0].length; col++) {
+                if (matrix[row][col] != null) {
+                    return matrix[row][col].x - row;
+                }
+            }
+        }
+        throw new RuntimeException();
     }
 
     private Point[][] rotateClockwise(Point[][] matrix) {
@@ -159,7 +161,7 @@ public class TestArrayRotation {
     }
 
     @Test
-    public void rotateClockwiseWithNulls(){
+    public void rotateClockwiseWithNulls() {
         Point[][] originalPoints = new Point[][]{
                 new Point[]{null, p(10, 11), null, null},
                 new Point[]{null, p(11, 11), null, null},
@@ -170,8 +172,8 @@ public class TestArrayRotation {
         assertArrayEquals("points with null not rotated properly:" + Arrays.deepToString(points),
                 new Point[][]{
                         new Point[]{null, null, null, null},
-                        new Point[]{null,  p(11, 11), p(11, 12), p(11, 13)},
-                        new Point[]{null,  p(12, 11), null, null},
+                        new Point[]{null, p(11, 11), p(11, 12), p(11, 13)},
+                        new Point[]{null, p(12, 11), null, null},
                         new Point[]{null, null, null, null}},
                 points);
     }
@@ -208,6 +210,7 @@ public class TestArrayRotation {
             this.y = y;
         }
 
+        @SuppressWarnings({"RedundantIfStatement"})
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
