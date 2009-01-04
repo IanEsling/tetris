@@ -4,8 +4,8 @@ import static junit.framework.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import shapes.LShape;
-import shapes.Square;
 import shapes.Shape;
+import shapes.Square;
 
 import java.util.List;
 
@@ -19,11 +19,11 @@ public class TestBoard {
     }
 
     @Test
-    public void addNewShapeWhenMovingShapeStops(){
+    public void addNewShapeWhenMovingShapeStops() {
         Shape originalShape = new Square();
         testee.addNewShape(originalShape);
-        for (int i = 0;i<27;i++){
-        testee.tick();
+        for (int i = 0; i < 27; i++) {
+            testee.tick();
         }
         assertEquals("moving shape not original", originalShape, testee.getMovingShape().getShape());
         testee.tick();

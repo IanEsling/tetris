@@ -59,8 +59,12 @@ public abstract class AbstractShapeTest {
 
     @Before
     public void createBoard() {
-        board = new Board(30, 10);//30 rows, 10 columns
+        board = new Board(30, 10){
+            @Override
+            protected void addNewShapeAtRandom() {
+                movingShape = null;
+            }
+        };//30 rows, 10 columns
         populatedCells = new ArrayList<Cell>();
     }
-
 }

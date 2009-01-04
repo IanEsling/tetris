@@ -1,7 +1,8 @@
 package board;
 
+import shapes.RandomShapeGenerationException;
+import shapes.RandomShapeGenerator;
 import shapes.Shape;
-import shapes.Square;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class Board {
     public static int END_ROW = 3;
     public static int START_COL = 3;
     public static int END_COL = 6;
-    MovingShape movingShape;
+    protected MovingShape movingShape;
 
     public Board(int rows, int columns) {
         this.rows = rows;
@@ -55,7 +56,16 @@ public class Board {
     public void tick() {
         if (movingShape != null) {
             movingShape.move(1, 0);
-            if (movingShapeCannotMoveDownAnymore()) addNewShape(new Square());
+            if (movingShapeCannotMoveDownAnymore()) addNewShapeAtRandom();
+        }
+    }
+
+    protected void addNewShapeAtRandom() {
+        try {
+            addNewShape(RandomShapeGenerator.getNewShapeAtRandom());
+        }
+        catch (RandomShapeGenerationException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -73,7 +83,7 @@ public class Board {
         return false;
     }
 
-    public void rotateShapeClockwise(){
+    public void rotateShapeClockwise() {
         movingShape.rotateClockwise();
     }
 
@@ -91,7 +101,7 @@ public class Board {
             shapeCells = new Cell[4][4];
         }
 
-        public Shape getShape(){
+        public Shape getShape() {
             return shape;
         }
 
@@ -157,7 +167,7 @@ public class Board {
             return cellList;
         }
 
-        public void rotateClockwise(){
+        public void rotateClockwise() {
             Cell[][] newShapeCells = new Cell[4][4];
             int rowCount = 0;
             for (Cell[] row : shapeCells) {
@@ -166,7 +176,7 @@ public class Board {
                     if (shapeCells[rowCount][column] != null) {
                         Cell oldCell = shapeCells[rowCount][column];
                         Cell newCell = cellAt(oldCell.row + column - rowCount, oldCell.column + columnCount - rowCount);
-                        newShapeCells[shapeCells.length-1-columnCount][shapeCells.length-1-rowCount] = newCell;
+                        newShapeCells[shapeCells.length - 1 - columnCount][shapeCells.length - 1 - rowCount] = newCell;
                     }
                     columnCount++;
                 }
