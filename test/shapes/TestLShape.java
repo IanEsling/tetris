@@ -11,6 +11,22 @@ import static shapes.ShapeTestUtils.assertBoardPopulation;
 public class TestLShape extends AbstractShapeTest {
 
     @Test
+    public void rotateMoveAndDrop(){
+        board.addNewShape(getNewShape());
+        board.rotateShapeAntiClockwise();
+        board.moveShapeToLeft();
+        for (int i=0;i<30;i++)
+        {
+            board.tick();
+        }
+        populatedCells.add(new Cell(Board.START_ROW+29, Board.START_COL-1));
+        populatedCells.add(new Cell(Board.START_ROW+29, Board.START_COL));
+        populatedCells.add(new Cell(Board.START_ROW+29, Board.START_COL+1));
+        populatedCells.add(new Cell(Board.START_ROW+28, Board.START_COL+1));
+        assertBoardPopulation(board, populatedCells);
+    }
+
+    @Test
     public void clockwiseRotations() {
         board.addNewShape(getNewShape());
         board.tick();

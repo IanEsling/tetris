@@ -74,12 +74,11 @@ public class Board {
             if (cell.row == rows - 1) return true;
             if ((cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
                     &&
-                    //it's not because it's one of its own cells
+                    //and it's not because it's one of its own cells
                     (!movingShape.listOfCells().contains(new Cell(cell.row + 1, cell.column)))
                     )
                 return true;
         }
-
         return false;
     }
 
@@ -209,10 +208,10 @@ public class Board {
     }
 
     private void setAllCells(Cell[][] cells, boolean populated) {
-        for (int row = 0; row < cells.length; row++) {
+        for (Cell[] cell : cells) {
             for (int col = 0; col < cells[0].length; col++) {
-                if (cells[row][col] != null)
-                    cells[row][col].setPopulated(populated);
+                if (cell[col] != null)
+                    cell[col].setPopulated(populated);
             }
         }
     }
