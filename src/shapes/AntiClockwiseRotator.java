@@ -8,7 +8,7 @@ public class AntiClockwiseRotator extends AbstractRotator {
     }
 
     @Override
-    public void rotate(int[][] newMatrix, int rowCount, int columnCount, int col) {
+    public void rotateMatrixPosition(int[][] newMatrix, int rowCount, int columnCount, int col) {
         newMatrix[columnCount][rowCount] = matrix[rowCount][col];
     }
 }

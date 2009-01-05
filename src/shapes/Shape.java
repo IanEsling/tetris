@@ -5,12 +5,12 @@ package shapes;
 public abstract class Shape {
 
     public int[][] cells;
-    private Rotator clockwiseRotator, antiClockwiseRotator;
+    private Rotator clockwise, antiClockwise;
 
     public Shape() {
-        newCells();
-        clockwiseRotator = new ClockwiseRotator(cells);
-        antiClockwiseRotator = new AntiClockwiseRotator(cells);
+        cells = new int[4][4];
+        clockwise = new ClockwiseRotator(cells);
+        antiClockwise = new AntiClockwiseRotator(cells);
         setShapeCells();
     }
 
@@ -20,20 +20,11 @@ public abstract class Shape {
         return cells;
     }
 
-    private void newCells() {
-        cells = new int[4][4];
-        for (int[] row : cells) {
-            for (Integer col : row) {
-                col = 0;
-            }
-        }
-    }
-
     public void rotateClockwise() {
-        clockwiseRotator.rotateMatrix();
+        clockwise.rotate();
     }
 
     public void rotateAntiClockwise() {
-        antiClockwiseRotator.rotateMatrix();
+        antiClockwise.rotate();
     }
 }

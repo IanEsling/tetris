@@ -12,8 +12,9 @@ public class Cell {
         this.column = column;
     }
 
-    void setPopulated(boolean populated) {
+    Cell setPopulated(boolean populated) {
         this.populated = populated;
+        return this;
     }
 
     public boolean isPopulated() {

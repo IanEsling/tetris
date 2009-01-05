@@ -32,7 +32,7 @@ public class TestArrayRotation {
 
     private void rotateClockwise(int[][] matrix) {
         Rotator rotator = new ClockwiseRotator(matrix);
-        rotator.rotateMatrix();
+        rotator.rotate();
     }
 
     @Test
@@ -70,7 +70,7 @@ public class TestArrayRotation {
 
     private void rotateAntiClockwise(int[][] matrix) {
         Rotator rotator = new AntiClockwiseRotator(matrix);
-        rotator.rotateMatrix();
+        rotator.rotate();
     }
 
     private Point[][] rotateAntiClockwise(Point[][] matrix) {
@@ -81,7 +81,7 @@ public class TestArrayRotation {
             }
         }
         Rotator rotator = new AntiClockwiseRotator(temp);
-        rotator.rotateMatrix();
+        rotator.rotate();
         int startRow = startX(matrix);
         int startCol = startY(matrix);
         for (int row = 0; row < temp.length; row++) {

@@ -6,6 +6,8 @@ import shapes.Shape;
 import java.util.ArrayList;
 import java.util.List;
 
+import static board.Board.Rotation.*;
+
 /**
  */
 public class Board {
@@ -31,12 +33,7 @@ public class Board {
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
-        cells = new ArrayList<Cell>();
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                cells.add(new Cell(row, col));
-            }
-        }
+        setCells(rows, columns);
     }
 
     public void moveShapeToRight() {
@@ -48,24 +45,12 @@ public class Board {
     }
 
     public void addNewShape(Shape shape) {
-        int[][] shapeCells = shape.getCells();
-        int shapeRow = 0;
         movingShape = new MovingShape(shape);
-        for (int row = START_ROW; row <= END_ROW; row++) {
-            int shapeCol = 0;
-            for (int col = START_COL; col <= END_COL; col++) {
-                if (shapeCells[shapeRow][shapeCol] == 1) {
-                    movingShape.shapeIsInThisCell(cellAt(row, col));
-                }
-                shapeCol++;
-            }
-            shapeRow++;
-        }
     }
 
     public void tick() {
         if (movingShape != null) {
-            movingShape.move(1, 0);
+            movingShape.move(1, 0);//move down one row
             if (movingShapeCannotMoveDownAnymore()) addNewShapeAtRandom();
         }
     }
@@ -76,42 +61,29 @@ public class Board {
 
     private boolean movingShapeCannotMoveDownAnymore() {
         for (Cell cell : movingShape.listOfCells()) {
-            if (cell.row == rows - 1) return true;
-            if ((cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
-                    &&
-                    //and it's not because it's one of its own cells
-                    (!movingShape.listOfCells().contains(new Cell(cell.row + 1, cell.column)))
-                    )
+            if (cellIsOnBottomRow(cell) || somethingBelowShape(cell))
                 return true;
         }
         return false;
     }
 
     public void rotateShapeClockwise() {
-        movingShape.rotate(Rotation.Clockwise);
+        movingShape.rotate(Clockwise);
     }
 
     public void rotateShapeAntiClockwise() {
-        movingShape.rotate(Rotation.AntiClockwise);
+        movingShape.rotate(AntiClockwise);
     }
 
     class MovingShape {
 
         Cell[][] shapeCells;
+
         Shape shape;
 
         MovingShape(Shape shape) {
             this.shape = shape;
-            shapeCells = new Cell[4][4];
-        }
-
-        public Shape getShape() {
-            return shape;
-        }
-
-        void shapeIsInThisCell(Cell cell) {
-            shapeCells[cell.row][cell.column - START_COL] = cell;
-            cell.setPopulated(true);
+            shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
         }
 
         void moveToRight() {
@@ -138,22 +110,24 @@ public class Board {
         void move(int rows, int columns) {
             if (!canMove(columns)) columns = 0;//trying to move left or right when on the edge
 
-            setCurrentCellsToUnpopulated();
-
             setCellsForNewPosition(rows, columns);
         }
 
         private void setCellsForNewPosition(int rows, int columns) {
+            setCurrentCellsToUnpopulated();
+
             for (int row = 0; row < shapeCells.length; row++) {
                 for (int column = 0; column < shapeCells[0].length; column++) {
-                    if (shapeCells[row][column] != null) {
-                        Cell oldCell = shapeCells[row][column];
-                        Cell newCell = cellAt(oldCell.row + rows, oldCell.column + columns);
-                        newCell.setPopulated(true);
-                        shapeCells[row][column] = newCell;
-                    }
+                    shapeCells[row][column] = setNewCell(rows, columns, shapeCells[row][column]);
                 }
             }
+        }
+
+        private Cell setNewCell(int rows, int columns, Cell cell) {
+            if (cell != null) {
+                return cellAt(cell.row + rows, cell.column + columns).setPopulated(true);
+            }
+            return cell;
         }
 
         private void setCurrentCellsToUnpopulated() {
@@ -166,8 +140,7 @@ public class Board {
             List<Cell> cellList = new ArrayList<Cell>();
             for (Cell[] cells : shapeCells) {
                 for (Cell cell : cells) {
-                    if (cell != null)
-                        cellList.add(cell);
+                    if (cell != null) cellList.add(cell);
                 }
             }
             return cellList;
@@ -190,23 +163,24 @@ public class Board {
         }
 
         private Cell[][] mapNewShapeToBoardCells() {
-            return newShapeCells(startingRow(shapeCells), startingColumn(shapeCells));
+            return boardCellsForNewShape(startingBoardRow(shapeCells), startingBoardColumn(shapeCells));
         }
 
-        private Cell[][] newShapeCells(int startRow, int startCol) {
+        private Cell[][] boardCellsForNewShape(int startRow, int startCol) {
             Cell[][] newShapeCells = new Cell[4][4];
             for (int row = 0; row < getShape().getCells().length; row++) {
                 for (int col = 0; col < getShape().getCells()[0].length; col++) {
                     newShapeCells[row][col] =
                             getShape().getCells()[row][col] == 0 ?
                                     null :
-                                    cellAt(startRow + row, startCol + col);
+                                    cellAt(startRow + row, startCol + col).setPopulated(true);
                 }
             }
             return newShapeCells;
         }
 
-        private int startingColumn(Cell[][] matrix) {
+        //board column at (0,0) of this matrix
+        private int startingBoardColumn(Cell[][] matrix) {
             for (Cell[] row : matrix) {
                 for (int col = 0; col < matrix[0].length; col++) {
                     if (row[col] != null) {
@@ -218,7 +192,8 @@ public class Board {
             throw new RuntimeException();
         }
 
-        private int startingRow(Cell[][] matrix) {
+        //board row at (0,0) of this matrix
+        private int startingBoardRow(Cell[][] matrix) {
             for (int row = 0; row < matrix.length; row++) {
                 for (int col = 0; col < matrix[0].length; col++) {
                     if (matrix[row][col] != null) {
@@ -229,6 +204,11 @@ public class Board {
             //fail fast, fail big
             throw new RuntimeException();
         }
+
+        public Shape getShape() {
+            return shape;
+        }
+
     }
 
     private void setAllCells(Cell[][] cells, boolean populated) {
@@ -262,5 +242,25 @@ public class Board {
 
     public int getRows() {
         return rows;
+    }
+
+    private void setCells(int rows, int columns) {
+        cells = new ArrayList<Cell>();
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                cells.add(new Cell(row, col));
+            }
+        }
+    }
+
+    private boolean cellIsOnBottomRow(Cell cell) {
+        return cell.row == rows - 1;
+    }
+
+    private boolean somethingBelowShape(Cell cell) {
+        return (cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
+                &&
+                //and it's not because it's one of its own cells
+                (!movingShape.listOfCells().contains(new Cell(cell.row + 1, cell.column)));
     }
 }
