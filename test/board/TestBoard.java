@@ -19,6 +19,15 @@ public class TestBoard {
     }
 
     @Test
+    public void gameOver(){
+        assertFalse(testee.gameOver());
+        testee.addNewShape(new Square());
+        assertFalse(testee.gameOver());
+        testee.addNewShape(new LShape());
+        assertTrue(testee.gameOver());
+    }
+
+    @Test
     public void addNewShapeWhenMovingShapeStops() {
         Shape originalShape = new Square();
         testee.addNewShape(originalShape);

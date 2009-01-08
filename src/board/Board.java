@@ -1,13 +1,13 @@
 package board;
 
+import static board.Board.Rotation.AntiClockwise;
+import static board.Board.Rotation.Clockwise;
 import shapes.RandomShapeGenerator;
 import shapes.Shape;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.awt.*;
-
-import static board.Board.Rotation.*;
 
 /**
  */
@@ -20,6 +20,11 @@ public class Board {
     public static int END_COL = 6;
     public static Color DEFAULT_EMPTY_COLOUR = Color.gray;
     protected MovingShape movingShape;
+    boolean gameOver = false;
+
+    public boolean gameOver() {
+        return gameOver;
+    }
 
     enum Rotation {
         Clockwise {void rotate(Shape shape) {
@@ -47,7 +52,18 @@ public class Board {
     }
 
     public void addNewShape(Shape shape) {
-        movingShape = new MovingShape(shape);
+        if (canAddNewShape()) movingShape = new MovingShape(shape);
+        else
+            gameOver = true;
+    }
+
+    private boolean canAddNewShape() {
+        for (int row = START_ROW; row <= END_ROW; row++) {
+            for (int col = START_COL; col <= END_COL; col++) {
+                if (cellAt(row, col).isPopulated()) return false;
+            }
+        }
+        return true;
     }
 
     public void tick() {
@@ -127,7 +143,7 @@ public class Board {
 
         private Cell setNewCell(int rows, int columns, Cell cell) {
             if (cell != null) {
-                return cellAt(cell.row + rows, cell.column + columns).setPopulated(true);
+                return cellAt(cell.row + rows, cell.column + columns).setPopulated(true, getShape());
             }
             return cell;
         }
@@ -216,7 +232,7 @@ public class Board {
     private void setAllCells(Cell[][] cells, boolean populated) {
         for (Cell[] cell : cells) {
             for (int col = 0; col < cells[0].length; col++) {
-                if (cell[col] != null){
+                if (cell[col] != null) {
                     cell[col].setPopulated(populated, getMovingShape().getShape());
                 }
             }

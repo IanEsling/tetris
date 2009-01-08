@@ -41,10 +41,11 @@ class BoardGui extends JPanel {
         }
     }
 
-    void start(){
+    void start() throws InterruptedException {
         addNewShape(new Square());
-        for (int i = 0;i < 300;i++){
+        while (!board.gameOver()){
             tick();
+            Thread.sleep(250);
         }
     }
 
@@ -57,12 +58,9 @@ class BoardGui extends JPanel {
 
     void addNewShape(Shape shape){
         board.addNewShape(shape);
-        for (CellGui cell : getCellGuis()){
-            cell.recolour();
-        }
     }
 
-    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, IllegalAccessException, InstantiationException {
+    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, IllegalAccessException, InstantiationException, InterruptedException {
         BoardGui game = new BoardGui(30, 10);
         UIManager.setLookAndFeel(
                 UIManager.getSystemLookAndFeelClassName());
