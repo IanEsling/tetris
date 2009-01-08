@@ -1,20 +1,36 @@
 package board;
 
+import shapes.Shape;
+
+import java.awt.*;
+
 /**
  */
 public class Cell {
     public int row;
     public int column;
     boolean populated;
+    Color colour;
 
     public Cell(int row, int column) {
         this.row = row;
         this.column = column;
+        colour = Board.DEFAULT_EMPTY_COLOUR;
+    }
+
+    Cell setPopulated(boolean populated, Shape shape) {
+        this.populated = populated;
+        colour = shape == null ? Board.DEFAULT_EMPTY_COLOUR : shape.getColour();
+        return this;
     }
 
     Cell setPopulated(boolean populated) {
-        this.populated = populated;
+        setPopulated(populated, null);
         return this;
+    }
+
+    Color getColour() {
+        return colour;
     }
 
     public boolean isPopulated() {

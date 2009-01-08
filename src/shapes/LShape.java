@@ -1,5 +1,7 @@
 package shapes;
 
+import java.awt.*;
+
 public class LShape extends Shape {
 
     /*
@@ -13,5 +15,10 @@ public class LShape extends Shape {
         cells[1][1] = 1;
         cells[2][1] = 1;
         cells[2][2] = 1;
+    }
+
+    @Override
+    public Color getColour() {
+        return Color.blue;
     }
 }

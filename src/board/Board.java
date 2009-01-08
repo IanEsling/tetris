@@ -5,6 +5,7 @@ import shapes.Shape;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.awt.*;
 
 import static board.Board.Rotation.*;
 
@@ -17,6 +18,7 @@ public class Board {
     public static int END_ROW = 3;
     public static int START_COL = 3;
     public static int END_COL = 6;
+    public static Color DEFAULT_EMPTY_COLOUR = Color.gray;
     protected MovingShape movingShape;
 
     enum Rotation {
@@ -173,7 +175,7 @@ public class Board {
                     newShapeCells[row][col] =
                             getShape().getCells()[row][col] == 0 ?
                                     null :
-                                    cellAt(startRow + row, startCol + col).setPopulated(true);
+                                    cellAt(startRow + row, startCol + col).setPopulated(true, getShape());
                 }
             }
             return newShapeCells;
@@ -214,8 +216,9 @@ public class Board {
     private void setAllCells(Cell[][] cells, boolean populated) {
         for (Cell[] cell : cells) {
             for (int col = 0; col < cells[0].length; col++) {
-                if (cell[col] != null)
-                    cell[col].setPopulated(populated);
+                if (cell[col] != null){
+                    cell[col].setPopulated(populated, getMovingShape().getShape());
+                }
             }
         }
     }

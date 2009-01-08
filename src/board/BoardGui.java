@@ -1,9 +1,13 @@
 package board;
 
+import shapes.Square;
+import shapes.Shape;
+
 import javax.swing.*;
-import java.util.List;
-import java.util.ArrayList;
+import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  */
@@ -12,14 +16,20 @@ class BoardGui extends JPanel {
     private Board board;
 
     BoardGui(int x, int y) {
-        setSize(800, 700);
         setLayout(new GridLayout(x, y));
+        setSize(x * CellGui.CELL_SIZE + 50, y * CellGui.CELL_SIZE + 50);
+
+        setBorder(new LineBorder(Color.black));
         board = new Board(x, y);
         createCellGuis();
     }
 
     public List<CellGui> getCellGuis() {
         return cellGuis;
+    }
+
+    public Board getBoard(){
+        return board;
     }
 
     private void createCellGuis() {
@@ -31,15 +41,39 @@ class BoardGui extends JPanel {
         }
     }
 
+    void start(){
+        addNewShape(new Square());
+        for (int i = 0;i < 300;i++){
+            tick();
+        }
+    }
+
+    private void tick(){
+        board.tick();
+        for (CellGui cell : getCellGuis()){
+            cell.recolour();
+        }
+    }
+
+    void addNewShape(Shape shape){
+        board.addNewShape(shape);
+        for (CellGui cell : getCellGuis()){
+            cell.recolour();
+        }
+    }
+
     public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, IllegalAccessException, InstantiationException {
-        BoardGui game = new BoardGui(30,10);
+        BoardGui game = new BoardGui(30, 10);
         UIManager.setLookAndFeel(
-            UIManager.getSystemLookAndFeelClassName());
+                UIManager.getSystemLookAndFeelClassName());
         JFrame app = new JFrame();
+        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         app.setLayout(new FlowLayout());
         app.add(game);
-        app.setSize(800,700);
+        app.setSize(500, 600);
+        app.setLocation(200,200);
         app.setVisible(true);
         app.setTitle("Tetris");
+        game.start();
     }
 }

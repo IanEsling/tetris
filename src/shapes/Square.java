@@ -1,5 +1,7 @@
 package shapes;
 
+import java.awt.*;
+
 public class Square extends Shape {
 
     @Override
@@ -8,5 +10,10 @@ public class Square extends Shape {
         cells[0][2] = 1;
         cells[1][1] = 1;
         cells[1][2] = 1;
+    }
+
+    @Override
+    public Color getColour() {
+        return Color.red;
     }
 }
