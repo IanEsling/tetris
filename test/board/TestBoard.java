@@ -19,12 +19,36 @@ public class TestBoard {
     }
 
     @Test
-    public void gameOver(){
+    public void gameOver() {
         assertFalse(testee.gameOver());
         testee.addNewShape(new Square());
         assertFalse(testee.gameOver());
         testee.addNewShape(new LShape());
         assertTrue(testee.gameOver());
+    }
+
+    @Test
+    public void shapeCannotMoveSidewaysIfCellAlreadyPopulated() {
+        testee = new SquareGeneratingBoard(30, 10);
+        Shape originalSquare = new Square();
+        testee.addNewShape(originalSquare);
+
+        for (int i = 0; i < 28; i++) {
+            testee.tick();
+        }
+        assertNotNull("moving shape is null", testee.getMovingShape());
+        assertFalse("moving shape is still original square", testee.getMovingShape().getShape() == originalSquare);
+        originalSquare = testee.getMovingShape().getShape();
+        testee.moveShapeToLeft();
+        testee.moveShapeToLeft();
+        for (int i = 0; i < 27; i++) {
+            testee.tick();
+        }
+        assertTrue("moving shape isn't original square", testee.getMovingShape().getShape()==originalSquare);
+        List<Cell> originalCells = testee.getMovingShape().listOfCells();
+        testee.moveShapeToRight();
+        assertEquals(originalCells, testee.getMovingShape().listOfCells());
+
     }
 
     @Test
@@ -122,5 +146,17 @@ public class TestBoard {
             if (cell.column > width) width = cell.column;
         }
         return width;
+    }
+
+    class SquareGeneratingBoard extends Board {
+
+        public SquareGeneratingBoard(int rows, int columns) {
+            super(rows, columns);
+        }
+
+        @Override
+        public void addNewShapeAtRandom() {
+            addNewShape(new Square());
+        }
     }
 }

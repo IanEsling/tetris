@@ -6,30 +6,27 @@ import shapes.Shape;
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyListener;
+import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
+import java.beans.PropertyChangeListener;
 
 /**
  */
-class BoardGui extends JPanel {
+public class BoardGui extends JPanel {
     List<CellGui> cellGuis;
     private Board board;
 
-    BoardGui(int x, int y) {
+    public BoardGui(int x, int y) {
         setLayout(new GridLayout(x, y));
         setSize(x * CellGui.CELL_SIZE + 50, y * CellGui.CELL_SIZE + 50);
 
         setBorder(new LineBorder(Color.black));
         board = new Board(x, y);
         createCellGuis();
-    }
-
-    public List<CellGui> getCellGuis() {
-        return cellGuis;
-    }
-
-    public Board getBoard(){
-        return board;
     }
 
     private void createCellGuis() {
@@ -41,37 +38,34 @@ class BoardGui extends JPanel {
         }
     }
 
-    void start() throws InterruptedException {
-        addNewShape(new Square());
-        while (!board.gameOver()){
-            tick();
-            Thread.sleep(250);
-        }
+    public void tick(){
+        board.tick();
+        repaintBoard();
     }
 
-    private void tick(){
-        board.tick();
+    public void repaintBoard() {
         for (CellGui cell : getCellGuis()){
             cell.recolour();
         }
+    }
+
+    public List<CellGui> getCellGuis() {
+        return cellGuis;
+    }
+
+    public Board getBoard(){
+        return board;
     }
 
     void addNewShape(Shape shape){
         board.addNewShape(shape);
     }
 
-    public static void main(String[] args) throws ClassNotFoundException, UnsupportedLookAndFeelException, IllegalAccessException, InstantiationException, InterruptedException {
-        BoardGui game = new BoardGui(30, 10);
-        UIManager.setLookAndFeel(
-                UIManager.getSystemLookAndFeelClassName());
-        JFrame app = new JFrame();
-        app.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        app.setLayout(new FlowLayout());
-        app.add(game);
-        app.setSize(500, 600);
-        app.setLocation(200,200);
-        app.setVisible(true);
-        app.setTitle("Tetris");
-        game.start();
+    public void addNewShapeAtRandom() {
+        board.addNewShapeAtRandom();
+    }
+
+    public boolean gameOver() {
+        return board.gameOver();
     }
 }

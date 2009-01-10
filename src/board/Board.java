@@ -2,7 +2,7 @@ package board;
 
 import static board.Board.Rotation.AntiClockwise;
 import static board.Board.Rotation.Clockwise;
-import shapes.RandomShapeGenerator;
+import static shapes.RandomShapeGenerator.getNewShapeAtRandom;
 import shapes.Shape;
 
 import java.awt.*;
@@ -73,8 +73,8 @@ public class Board {
         }
     }
 
-    protected void addNewShapeAtRandom() {
-        addNewShape(RandomShapeGenerator.getNewShapeAtRandom());
+    public void addNewShapeAtRandom() {
+        addNewShape(getNewShapeAtRandom());
     }
 
     private boolean movingShapeCannotMoveDownAnymore() {
@@ -96,7 +96,6 @@ public class Board {
     class MovingShape {
 
         Cell[][] shapeCells;
-
         Shape shape;
 
         MovingShape(Shape shape) {
@@ -121,6 +120,11 @@ public class Board {
                 //cell is on left edge and attempt to move left
                 if (cell.column == 0 && columns < 0)
                     return false;
+
+                //trying to move sideways into a populated cell
+                if (columns != 0 && cellAt(cell.row, cell.column + columns).isPopulated() &&
+                        (!movingShape.listOfCells().contains(new Cell(cell.row, cell.column + columns))))
+                    return false;
             }
             return true;
         }
@@ -128,7 +132,8 @@ public class Board {
         void move(int rows, int columns) {
             if (!canMove(columns)) columns = 0;//trying to move left or right when on the edge
 
-            setCellsForNewPosition(rows, columns);
+            if (rows != 0 || columns != 0)
+                setCellsForNewPosition(rows, columns);
         }
 
         private void setCellsForNewPosition(int rows, int columns) {

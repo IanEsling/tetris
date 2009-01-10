@@ -61,7 +61,7 @@ public abstract class AbstractShapeTest {
     public void createBoard() {
         board = new Board(30, 10){
             @Override
-            protected void addNewShapeAtRandom() {
+            public void addNewShapeAtRandom() {
                 movingShape = null;
             }
         };//30 rows, 10 columns
