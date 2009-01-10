@@ -7,6 +7,7 @@ import shapes.LShape;
 import shapes.Shape;
 import shapes.Square;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TestBoard {
@@ -16,6 +17,57 @@ public class TestBoard {
     @Before
     public void createBoard() {
         testee = new Board(30, 10);//30 rows, 10 columns
+    }
+
+    @Test
+    public void removeCompleteBottomRow() {
+        testee = new Board(30, 10) {
+            @Override
+            public void addNewShape(Shape shape) {
+                super.addNewShape(new LShape());
+            }
+        };
+        testee.addNewShapeAtRandom();
+        moveSidewaysThenToBottom(-4);
+        moveSidewaysThenToBottom(-2);
+        moveShapeToBottom();
+        moveSidewaysThenToBottom(2);
+        moveSidewaysThenToBottom(4);
+        assertTrue("new moving shape in wrong position: "+testee.getCells(),
+                testee.cellAt(1, 4).isPopulated());
+        for (Cell cell : testee.getCells()) {
+            if (cell.row == 29 || cell.row == 28) assertTrue("bottom row not populated correctly: " + populatedCells(),
+                    cell.column % 2 == 1 ? !cell.isPopulated() : cell.isPopulated());
+            if (cell.row == 27) assertFalse(cell.isPopulated());
+        }
+        assertTrue("new moving shape shouldn't have moved when row removed: "+testee.getCells(),
+                testee.cellAt(1, 4).isPopulated());
+        assertTrue("new moving shape shouldn't have moved when row removed: "+testee.getCells(),
+                testee.cellAt(2, 4).isPopulated());
+        assertTrue("new moving shape shouldn't have moved when row removed: "+testee.getCells(),
+                testee.cellAt(3, 4).isPopulated());
+        assertTrue("new moving shape shouldn't have moved when row removed: "+testee.getCells(),
+                testee.cellAt(3, 5).isPopulated());
+    }
+
+    private void moveSidewaysThenToBottom(int colsToMove) {
+        testee.getMovingShape().move(0, colsToMove);
+        moveShapeToBottom();
+    }
+
+    private List<Cell> populatedCells() {
+        List<Cell> populatedCells = new ArrayList<Cell>();
+        for (Cell cell : testee.getCells()) {
+            if (cell.isPopulated()) populatedCells.add(cell);
+        }
+        return populatedCells;
+    }
+
+    private void moveShapeToBottom() {
+        while (!testee.movingShapeCannotMoveDownAnymore()) {
+            testee.tick();
+        }
+        testee.tick();
     }
 
     @Test
@@ -44,7 +96,7 @@ public class TestBoard {
         for (int i = 0; i < 27; i++) {
             testee.tick();
         }
-        assertTrue("moving shape isn't original square", testee.getMovingShape().getShape()==originalSquare);
+        assertTrue("moving shape isn't original square", testee.getMovingShape().getShape() == originalSquare);
         List<Cell> originalCells = testee.getMovingShape().listOfCells();
         testee.moveShapeToRight();
         assertEquals(originalCells, testee.getMovingShape().listOfCells());

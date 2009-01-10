@@ -70,8 +70,44 @@ public class Board {
         if (movingShape != null) {
             //don't check after moving, so player can still move sideways before next tick
             if (movingShapeCannotMoveDownAnymore()) addNewShapeAtRandom();
+            removeCompletedRows();
             movingShape.move(1, 0);//move down one row
         }
+    }
+
+    private void removeCompletedRows() {
+        for (int row = 0; row < rows; row++) {
+            boolean complete = true;
+            for (Cell cell : cellsInRow(row)) {
+                if (!cell.isPopulated()) complete = false;
+            }
+            if (complete) {
+                removeRow(row);
+            }
+        }
+    }
+
+    private void removeRow(int removeMe) {
+        for (int row = removeMe; row > 0; row--) {
+            for (Cell cell : cellsInRow(row)) {
+                Cell cellAbove = cellAt(row - 1, cell.column);
+                if (getMovingShape().listOfCells().contains(cellAbove)) {
+                    cell.setPopulated(false);
+                    cell.setColour(Board.DEFAULT_EMPTY_COLOUR);
+                } else {
+                    cell.setPopulated(cellAbove.isPopulated());
+                    cell.setColour(cellAbove.getColour());
+                }
+            }
+        }
+    }
+
+    private List<Cell> cellsInRow(int row) {
+        List<Cell> cellsInRow = new ArrayList<Cell>();
+        for (Cell cell : cells) {
+            if (cell.row == row) cellsInRow.add(cell);
+        }
+        return cellsInRow;
     }
 
     public void addNewShapeAtRandom() {

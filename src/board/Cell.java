@@ -20,7 +20,7 @@ public class Cell {
 
     Cell setPopulated(boolean populated, Shape shape) {
         this.populated = populated;
-        colour = (populated ? shape.getColour() : Board.DEFAULT_EMPTY_COLOUR);
+        colour = ((populated && shape!=null) ? shape.getColour() : Board.DEFAULT_EMPTY_COLOUR);
         return this;
     }
 
@@ -61,5 +61,9 @@ public class Cell {
     @Override
     public String toString() {
         return "[" + row + "," + column + ": " + (isPopulated() ? "populated" : "empty") + "]";
+    }
+
+    public void setColour(Color colour) {
+        this.colour = colour;
     }
 }
