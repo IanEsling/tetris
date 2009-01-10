@@ -257,7 +257,7 @@ public class Board {
         return cellAt(row, column);
     }
 
-    private Cell cellAt(int row, int column) {
+    Cell cellAt(int row, int column) {
         return cells.get(cells.indexOf(new Cell(row, column)));
     }
 

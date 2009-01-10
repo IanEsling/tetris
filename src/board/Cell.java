@@ -20,7 +20,7 @@ public class Cell {
 
     Cell setPopulated(boolean populated, Shape shape) {
         this.populated = populated;
-        colour = shape == null ? Board.DEFAULT_EMPTY_COLOUR : shape.getColour();
+        colour = (populated ? shape.getColour() : Board.DEFAULT_EMPTY_COLOUR);
         return this;
     }
 

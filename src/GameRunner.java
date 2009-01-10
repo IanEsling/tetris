@@ -48,6 +48,8 @@ public class GameRunner {
         public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_LEFT) board.getBoard().moveShapeToLeft();
             if (e.getKeyCode() == KeyEvent.VK_RIGHT) board.getBoard().moveShapeToRight();
+            if (e.getKeyCode() == KeyEvent.VK_UP) board.getBoard().rotateShapeAntiClockwise();
+            if (e.getKeyCode() == KeyEvent.VK_DOWN) board.getBoard().rotateShapeClockwise();
 
             board.repaintBoard();
         }
