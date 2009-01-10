@@ -62,7 +62,6 @@ public class TestBoard {
                 }
             }
         }
-        System.out.println(populatedCells());
     }
 
     private void assertRowPopulation(int row, boolean populated) {
