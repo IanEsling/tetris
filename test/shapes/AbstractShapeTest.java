@@ -35,17 +35,21 @@ public abstract class AbstractShapeTest {
 
     @Test
     public void moveShapesAllWayDownBoard() {
-        addShapeAndTick(50);
+        addNewShapeAndMoveToBottom();
         populateFirstShapeAtBottomCells();
         assertBoardPopulation(board, populatedCells);
-        addShapeAndTick(50);
+        addNewShapeAndMoveToBottom();
         populateSecondShapeAtBottomCells();
         assertBoardPopulation(board, populatedCells);
     }
 
-    void addShapeAndTick(int ticks) {
+    void addNewShapeAndMoveToBottom() {
         board.addNewShape(getNewShape());
-        for (int i = 0; i < ticks; i++) {
+        moveShapeToBottom();
+    }
+
+    public void moveShapeToBottom() {
+        while(!board.movingShapeCannotMoveDownAnymore()){
             board.tick();
         }
     }
@@ -60,10 +64,10 @@ public abstract class AbstractShapeTest {
     @Before
     public void createBoard() {
         board = new Board(30, 10){
-            @Override
-            public void addNewShapeAtRandom() {
-                movingShape = null;
-            }
+//            @Override
+//            public void addNewShapeAtRandom() {
+//                movingShape = null;
+//            }
         };//30 rows, 10 columns
         populatedCells = new ArrayList<Cell>();
     }

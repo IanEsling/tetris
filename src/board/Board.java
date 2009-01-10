@@ -68,8 +68,9 @@ public class Board {
 
     public void tick() {
         if (movingShape != null) {
-            movingShape.move(1, 0);//move down one row
+            //don't check after moving, so player can still move sideways before next tick
             if (movingShapeCannotMoveDownAnymore()) addNewShapeAtRandom();
+            movingShape.move(1, 0);//move down one row
         }
     }
 
@@ -77,9 +78,9 @@ public class Board {
         addNewShape(getNewShapeAtRandom());
     }
 
-    private boolean movingShapeCannotMoveDownAnymore() {
+    public boolean movingShapeCannotMoveDownAnymore() {
         for (Cell cell : movingShape.listOfCells()) {
-            if (cellIsOnBottomRow(cell) || somethingBelowShape(cell))
+            if (cellIsOnBottomRow(cell) || somethingBelowCell(cell))
                 return true;
         }
         return false;
@@ -129,8 +130,8 @@ public class Board {
             return true;
         }
 
-        void move(int rows, int columns) {
-            if (!canMove(columns)) columns = 0;//trying to move left or right when on the edge
+        synchronized void move(int rows, int columns) {
+            if (!canMove(columns)) columns = 0;//trying to move left or right when blocked or on the edge
 
             if (rows != 0 || columns != 0)
                 setCellsForNewPosition(rows, columns);
@@ -244,7 +245,7 @@ public class Board {
         }
     }
 
-    MovingShape getMovingShape() {
+    public MovingShape getMovingShape() {
         return movingShape;
     }
 
@@ -281,7 +282,7 @@ public class Board {
         return cell.row == rows - 1;
     }
 
-    private boolean somethingBelowShape(Cell cell) {
+    private boolean somethingBelowCell(Cell cell) {
         return (cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
                 &&
                 //and it's not because it's one of its own cells

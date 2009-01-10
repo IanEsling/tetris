@@ -15,10 +15,7 @@ public class TestLShape extends AbstractShapeTest {
         board.addNewShape(getNewShape());
         board.rotateShapeAntiClockwise();
         board.moveShapeToLeft();
-        for (int i=0;i<30;i++)
-        {
-            board.tick();
-        }
+        moveShapeToBottom();
         populatedCells.add(new Cell(Board.START_ROW+29, Board.START_COL-1));
         populatedCells.add(new Cell(Board.START_ROW+29, Board.START_COL));
         populatedCells.add(new Cell(Board.START_ROW+29, Board.START_COL+1));

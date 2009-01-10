@@ -19,14 +19,12 @@ public class TestXLShape extends AbstractShapeTest {
      */
     @Test
     public void notBottomCellsCausingFallToStop() {
-        addShapeAndTick(50);
+        addNewShapeAndMoveToBottom();
         populateFirstShapeAtBottomCells();
         assertBoardPopulation(board, populatedCells);
         board.addNewShape(getNewShape());
         board.moveShapeToLeft();
-        for (int i = 0; i < 50; i++) {
-            board.tick();
-        }
+        moveShapeToBottom();
         populateSecondShapeHookedOntoFirst();
         assertBoardPopulation(board, populatedCells);
     }

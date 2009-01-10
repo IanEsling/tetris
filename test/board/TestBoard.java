@@ -33,7 +33,7 @@ public class TestBoard {
         Shape originalSquare = new Square();
         testee.addNewShape(originalSquare);
 
-        for (int i = 0; i < 28; i++) {
+        for (int i = 0; i < 29; i++) {
             testee.tick();
         }
         assertNotNull("moving shape is null", testee.getMovingShape());
@@ -55,7 +55,7 @@ public class TestBoard {
     public void addNewShapeWhenMovingShapeStops() {
         Shape originalShape = new Square();
         testee.addNewShape(originalShape);
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 28; i++) {
             testee.tick();
         }
         assertEquals("moving shape not original", originalShape, testee.getMovingShape().getShape());
