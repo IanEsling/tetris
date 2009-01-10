@@ -64,10 +64,10 @@ public abstract class AbstractShapeTest {
     @Before
     public void createBoard() {
         board = new Board(30, 10){
-//            @Override
-//            public void addNewShapeAtRandom() {
-//                movingShape = null;
-//            }
+            @Override
+            public void addNewShapeAtRandom() {
+                movingShape = new MovingShape(getNewShape());
+            }
         };//30 rows, 10 columns
         populatedCells = new ArrayList<Cell>();
     }

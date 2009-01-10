@@ -3,12 +3,29 @@ package shapes;
 import board.Board;
 import board.Cell;
 import org.junit.Test;
+import org.junit.Ignore;
 import static shapes.ShapeTestUtils.assertBoardPopulation;
 
 
 /**
  */
 public class TestLShape extends AbstractShapeTest {
+
+    @Ignore
+    @Test
+    public void doNotRotateIfEdgeOfBoard(){
+        board.addNewShape(getNewShape());
+        board.moveShapeToRight();
+        board.moveShapeToRight();
+        board.moveShapeToRight();
+        board.moveShapeToRight();
+        board.rotateShapeClockwise();
+        populatedCells.add(new Cell(Board.START_ROW, Board.START_COL+3));
+        populatedCells.add(new Cell(Board.START_ROW+1, Board.START_COL+3));
+        populatedCells.add(new Cell(Board.START_ROW+2, Board.START_COL+3));
+        populatedCells.add(new Cell(Board.START_ROW+2, Board.START_COL+4));
+        assertBoardPopulation(board, populatedCells);
+    }
 
     @Test
     public void rotateMoveAndDrop(){

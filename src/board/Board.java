@@ -69,8 +69,10 @@ public class Board {
     public void tick() {
         if (movingShape != null) {
             //don't check after moving, so player can still move sideways before next tick
-            if (movingShapeCannotMoveDownAnymore()) addNewShapeAtRandom();
-            removeCompletedRows();
+            if (movingShapeCannotMoveDownAnymore()) {
+                addNewShapeAtRandom();
+                removeCompletedRows();
+            }            
             movingShape.move(1, 0);//move down one row
         }
     }
@@ -130,12 +132,12 @@ public class Board {
         movingShape.rotate(AntiClockwise);
     }
 
-    class MovingShape {
+    public class MovingShape {
 
         Cell[][] shapeCells;
         Shape shape;
 
-        MovingShape(Shape shape) {
+        public MovingShape(Shape shape) {
             this.shape = shape;
             shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
         }
