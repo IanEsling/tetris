@@ -52,12 +52,16 @@ public abstract class AbstractRotator implements Rotator {
     private int col(int col) {
         return (board.getMovingShape().startingBoardColumn() + col) >= board.getColumns() ?
                 board.getColumns() - 1 :
+                (board.getMovingShape().startingBoardColumn() + col) < 0 ?
+                0 :
                 board.getMovingShape().startingBoardColumn() + col;
     }
 
     private int row(int row) {
         return (board.getMovingShape().startingBoardRow() + row) >= board.getRows() ?
                 board.getRows() - 1 :
+                (board.getMovingShape().startingBoardRow() + row) < 0 ?
+                0 :
                 board.getMovingShape().startingBoardRow() + row;
     }
 
