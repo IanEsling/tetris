@@ -36,7 +36,7 @@ public class TestBoard {
         moveSidewaysThenToBottom(2);
         moveSidewaysThenToBottom(4);
         moveSidewaysThenToBottom(4);
-        for (int i = 0; i < 24; i++) {
+        for (int i = 0; i < 23; i++) {
             testee.tick();
         }
         assertRowPopulation(26, true);
@@ -170,7 +170,7 @@ public class TestBoard {
         Shape originalSquare = new Square();
         testee.addNewShape(originalSquare);
 
-        for (int i = 0; i < 29; i++) {
+        for (int i = 0; i < 28; i++) {
             testee.tick();
         }
         assertNotNull("moving shape is null", testee.getMovingShape());
@@ -178,13 +178,13 @@ public class TestBoard {
         originalSquare = testee.getMovingShape().getShape();
         testee.moveShapeToLeft();
         testee.moveShapeToLeft();
-        for (int i = 0; i < 27; i++) {
+        for (int i = 0; i < 26; i++) {
             testee.tick();
         }
         assertTrue("moving shape isn't original square", testee.getMovingShape().getShape() == originalSquare);
-        List<Cell> originalCells = testee.getMovingShape().listOfCells();
+        List<Cell> originalCells = testee.getMovingShape().shapeCellsAsList();
         testee.moveShapeToRight();
-        assertEquals(originalCells, testee.getMovingShape().listOfCells());
+        assertEquals(originalCells, testee.getMovingShape().shapeCellsAsList());
 
     }
 
@@ -192,7 +192,7 @@ public class TestBoard {
     public void addNewShapeWhenMovingShapeStops() {
         Shape originalShape = new Square();
         testee.addNewShape(originalShape);
-        for (int i = 0; i < 28; i++) {
+        for (int i = 0; i < 27; i++) {
             testee.tick();
         }
         assertEquals("moving shape not original", originalShape, testee.getMovingShape().getShape());
@@ -204,7 +204,7 @@ public class TestBoard {
     @Test
     public void moveShapeAround() {
         testee.addNewShape(new LShape());
-        List<Cell> startCells = testee.getMovingShape().listOfCells();
+        List<Cell> startCells = testee.getMovingShape().shapeCellsAsList();
         testee.moveShapeToLeft();
         assertShapeHasMoved(startCells, 0, -1);
         testee.moveShapeToLeft();
@@ -235,7 +235,7 @@ public class TestBoard {
     }
 
     private void assertShapeHasMoved(List<Cell> startCells, int rows, int columns) {
-        List<Cell> newCells = testee.getMovingShape().listOfCells();
+        List<Cell> newCells = testee.getMovingShape().shapeCellsAsList();
         assertEquals("start and new cells not same size", startCells.size(), newCells.size());
         for (Cell cell : startCells) {
             assertTrue("testee doesn't contain new cell, rows:" + rows + ", columns:" + columns +

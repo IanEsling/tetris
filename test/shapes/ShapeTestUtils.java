@@ -19,25 +19,29 @@ public class ShapeTestUtils {
     }
 
     public static void assertBoardPopulation(Board board, List<Cell> populatedCells) {
+        assertBoardPopulation(null, board, populatedCells);
+    }
+
+    public static void assertBoardPopulation(String msg, Board board, List<Cell> populatedCells) {
         for (Cell cell : board.getCells()) {
             if (populatedCells.contains(cell))
-                assertBoardCellHasShape(board, cell.row, cell.column);
+                assertBoardCellHasShape(msg, board, cell.row, cell.column);
             else
-                assertBoardCellIsEmpty(board, cell.row, cell.column);
+                assertBoardCellIsEmpty(msg, board, cell.row, cell.column);
         }
     }
 
 
-    private static void assertBoardCellIsEmpty(Board board, int x, int y) {
-        assertBoardCellStatus(board, x, y, false);
+    private static void assertBoardCellIsEmpty(String msg, Board board, int x, int y) {
+        assertBoardCellStatus(msg, board, x, y, false);
     }
 
-    private static void assertBoardCellHasShape(Board board, int x, int y) {
-        assertBoardCellStatus(board, x, y, true);
+    private static void assertBoardCellHasShape(String msg, Board board, int x, int y) {
+        assertBoardCellStatus(msg, board, x, y, true);
     }
 
-    private static void assertBoardCellStatus(Board board, int x, int y, boolean populated) {
-        assertEquals("board cell " + x + "," + y + " not populated as expected: "
+    private static void assertBoardCellStatus(String msg, Board board, int x, int y, boolean populated) {
+        assertEquals(msg+".  Board cell " + x + "," + y + " not populated as expected: "
                 + listOfPopulatedCells(board),
                 populated, board.getCell(x, y).isPopulated());
     }

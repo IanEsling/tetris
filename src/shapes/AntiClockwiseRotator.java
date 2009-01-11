@@ -1,14 +1,19 @@
 package shapes;
 
+import board.Board;
+
 /**
  */
 public class AntiClockwiseRotator extends AbstractRotator {
-    public AntiClockwiseRotator(int[][] matrix) {
-        super(matrix);
+
+    public AntiClockwiseRotator(){}
+    
+    public AntiClockwiseRotator(Board board) {
+        super(board);
     }
 
     @Override
-    public void rotateMatrixPosition(int[][] newMatrix, int rowCount, int columnCount, int col) {
-        newMatrix[columnCount][rowCount] = matrix[rowCount][col];
+    public void rotateMatrixPosition(int[][] currentMatrix, int[][] newMatrix, int rowCount, int columnCount, int col) {
+        newMatrix[columnCount][rowCount] = currentMatrix[rowCount][col];
     }
 }

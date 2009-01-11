@@ -15,10 +15,10 @@ public class TestSquare extends AbstractShapeTest {
 
     @Override
     void populateNewShapeOnBoardCells() {
-        populatedCells.add(new Cell(Board.START_ROW, Board.START_COL + 1));
-        populatedCells.add(new Cell(Board.START_ROW, Board.START_COL + 2));
         populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
     }
 
     @Override
@@ -39,10 +39,10 @@ public class TestSquare extends AbstractShapeTest {
 
     @Override
     void populateOneRowDownCells() {
-        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 1));
-        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 2));
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 3, Board.START_COL + 2));
     }
 }
 

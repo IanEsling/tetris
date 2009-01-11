@@ -2,7 +2,10 @@ package board;
 
 import static board.Board.Rotation.AntiClockwise;
 import static board.Board.Rotation.Clockwise;
+import shapes.AntiClockwiseRotator;
+import shapes.ClockwiseRotator;
 import static shapes.RandomShapeGenerator.getNewShapeAtRandom;
+import shapes.Rotator;
 import shapes.Shape;
 
 import java.awt.*;
@@ -18,28 +21,38 @@ public class Board {
     public static int END_ROW = 3;
     public static int START_COL = 3;
     public static int END_COL = 6;
-    public static Color DEFAULT_EMPTY_COLOUR = Color.gray;
+    public static Color DEFAULT_EMPTY_COLOUR = Color.gray, BEING_REMOVED = Color.white;
     protected MovingShape movingShape;
     boolean gameOver = false;
+    RotatorFactory rotators;
+
 
     public boolean gameOver() {
         return gameOver;
     }
 
-    enum Rotation {
-        Clockwise {void rotate(Shape shape) {
-            shape.rotateClockwise();
-        }},
-        AntiClockwise {void rotate(Shape shape) {
-            shape.rotateAntiClockwise();
-        }};
+    static class RotatorFactory {
+        Rotator clockwiseRotator, antiClockwiseRotator;
 
-        abstract void rotate(Shape shape);
+        RotatorFactory(Board board) {
+            clockwiseRotator = new ClockwiseRotator(board);
+            antiClockwiseRotator = new AntiClockwiseRotator(board);
+        }
+
+        Rotator get(Rotation rotation) {
+            return rotation == Rotation.AntiClockwise ? antiClockwiseRotator : clockwiseRotator;
+        }
+    }
+
+    enum Rotation {
+        Clockwise,
+        AntiClockwise
     }
 
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
+        rotators = new RotatorFactory(this);
         setCells(rows, columns);
     }
 
@@ -72,7 +85,7 @@ public class Board {
             if (movingShapeCannotMoveDownAnymore()) {
                 addNewShapeAtRandom();
                 removeCompletedRows();
-            }            
+            }
             movingShape.move(1, 0);//move down one row
         }
     }
@@ -93,7 +106,7 @@ public class Board {
         for (int row = removeMe; row > 0; row--) {
             for (Cell cell : cellsInRow(row)) {
                 Cell cellAbove = cellAt(row - 1, cell.column);
-                if (getMovingShape().listOfCells().contains(cellAbove)) {
+                if (getMovingShape().shapeCellsAsList().contains(cellAbove)) {
                     cell.setPopulated(false);
                     cell.setColour(Board.DEFAULT_EMPTY_COLOUR);
                 } else {
@@ -117,7 +130,7 @@ public class Board {
     }
 
     public boolean movingShapeCannotMoveDownAnymore() {
-        for (Cell cell : movingShape.listOfCells()) {
+        for (Cell cell : movingShape.shapeCellsAsList()) {
             if (cellIsOnBottomRow(cell) || somethingBelowCell(cell))
                 return true;
         }
@@ -129,7 +142,7 @@ public class Board {
     }
 
     public void rotateShapeAntiClockwise() {
-        movingShape.rotate(AntiClockwise);
+       movingShape.rotate(AntiClockwise);
     }
 
     public class MovingShape {
@@ -151,7 +164,7 @@ public class Board {
         }
 
         boolean canMove(int columns) {
-            for (Cell cell : listOfCells()) {
+            for (Cell cell : shapeCellsAsList()) {
                 //cell is on right edge and attempt to move right
                 if (cell.column == getColumns() - 1 && columns > 0)
                     return false;
@@ -162,7 +175,7 @@ public class Board {
 
                 //trying to move sideways into a populated cell
                 if (columns != 0 && cellAt(cell.row, cell.column + columns).isPopulated() &&
-                        (!movingShape.listOfCells().contains(new Cell(cell.row, cell.column + columns))))
+                        (!movingShape.shapeCellsAsList().contains(new Cell(cell.row, cell.column + columns))))
                     return false;
             }
             return true;
@@ -193,12 +206,12 @@ public class Board {
         }
 
         private void setCurrentCellsToUnpopulated() {
-            for (Cell cell : listOfCells()) {
+            for (Cell cell : shapeCellsAsList()) {
                 cell.setPopulated(false);
             }
         }
 
-        public List<Cell> listOfCells() {
+        public List<Cell> shapeCellsAsList() {
             List<Cell> cellList = new ArrayList<Cell>();
             for (Cell[] cells : shapeCells) {
                 for (Cell cell : cells) {
@@ -219,7 +232,7 @@ public class Board {
         }
 
         private Cell[][] rotateCells(Rotation rotation) {
-            rotation.rotate(getShape());
+            rotators.get(rotation).rotate();
 
             return mapNewShapeToBoardCells();
         }
@@ -296,6 +309,9 @@ public class Board {
     }
 
     Cell cellAt(int row, int column) {
+        if (cells.indexOf(new Cell(row, column)) < 0){
+            throw new RuntimeException("cell not found at "+row+","+column);
+        }
         return cells.get(cells.indexOf(new Cell(row, column)));
     }
 
@@ -324,6 +340,6 @@ public class Board {
         return (cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
                 &&
                 //and it's not because it's one of its own cells
-                (!movingShape.listOfCells().contains(new Cell(cell.row + 1, cell.column)));
+                (!movingShape.shapeCellsAsList().contains(new Cell(cell.row + 1, cell.column)));
     }
 }

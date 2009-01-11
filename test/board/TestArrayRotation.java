@@ -2,12 +2,10 @@ package board;
 
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
+import shapes.AntiClockwiseRotator;
+import shapes.ClockwiseRotator;
 
 import java.util.Arrays;
-
-import shapes.Rotator;
-import shapes.ClockwiseRotator;
-import shapes.AntiClockwiseRotator;
 
 /**
  */
@@ -21,7 +19,7 @@ public class TestArrayRotation {
                 new int[]{5, 6, 7, 8},
                 new int[]{9, 10, 11, 12},
                 new int[]{13, 14, 15, 16}};
-        rotateClockwise(matrix);
+        matrix = rotateClockwise(matrix);
         assertArrayEquals("basic clockwise rotation failed: " + Arrays.deepToString(matrix),
                 matrix, new int[][]{
                         new int[]{13, 9, 5, 1},
@@ -30,9 +28,9 @@ public class TestArrayRotation {
                         new int[]{16, 12, 8, 4}});
     }
 
-    private void rotateClockwise(int[][] matrix) {
-        Rotator rotator = new ClockwiseRotator(matrix);
-        rotator.rotate();
+    private int[][] rotateClockwise(int[][] matrix) {
+        ClockwiseRotator rotator = new ClockwiseRotator();
+        return rotator.getRotatedMatrix(matrix);
     }
 
     @Test
@@ -42,25 +40,25 @@ public class TestArrayRotation {
                 new int[]{5, 6, 7, 8},
                 new int[]{9, 10, 11, 12},
                 new int[]{13, 14, 15, 16}};
-        rotateAntiClockwise(matrix);
+        matrix = rotateAntiClockwise(matrix);
         assertArrayEquals(matrix, new int[][]{
                 new int[]{4, 8, 12, 16},
                 new int[]{3, 7, 11, 15},
                 new int[]{2, 6, 10, 14},
                 new int[]{1, 5, 9, 13}});
-        rotateAntiClockwise(matrix);
+        matrix = rotateAntiClockwise(matrix);
         assertArrayEquals(matrix, new int[][]{
                 new int[]{16, 15, 14, 13},
                 new int[]{12, 11, 10, 9},
                 new int[]{8, 7, 6, 5},
                 new int[]{4, 3, 2, 1}});
-        rotateAntiClockwise(matrix);
+        matrix = rotateAntiClockwise(matrix);
         assertArrayEquals(matrix, new int[][]{
                 new int[]{13, 9, 5, 1},
                 new int[]{14, 10, 6, 2},
                 new int[]{15, 11, 7, 3},
                 new int[]{16, 12, 8, 4}});
-        rotateAntiClockwise(matrix);
+        matrix = rotateAntiClockwise(matrix);
         assertArrayEquals(matrix, new int[][]{
                 new int[]{1, 2, 3, 4},
                 new int[]{5, 6, 7, 8},
@@ -68,9 +66,9 @@ public class TestArrayRotation {
                 new int[]{13, 14, 15, 16}});
     }
 
-    private void rotateAntiClockwise(int[][] matrix) {
-        Rotator rotator = new AntiClockwiseRotator(matrix);
-        rotator.rotate();
+    private int[][] rotateAntiClockwise(int[][] matrix) {
+        AntiClockwiseRotator rotator = new AntiClockwiseRotator();
+        return rotator.getRotatedMatrix(matrix);
     }
 
     private Point[][] rotateAntiClockwise(Point[][] matrix) {
@@ -80,8 +78,8 @@ public class TestArrayRotation {
                 temp[row][col] = matrix[row][col] == null ? 0 : 1;
             }
         }
-        Rotator rotator = new AntiClockwiseRotator(temp);
-        rotator.rotate();
+        AntiClockwiseRotator rotator = new AntiClockwiseRotator();
+        temp = rotator.getRotatedMatrix(temp);
         int startRow = startX(matrix);
         int startCol = startY(matrix);
         for (int row = 0; row < temp.length; row++) {
