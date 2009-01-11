@@ -238,7 +238,7 @@ public class Board {
         }
 
         private Cell[][] mapNewShapeToBoardCells() {
-            return boardCellsForNewShape(startingBoardRow(shapeCells), startingBoardColumn(shapeCells));
+            return boardCellsForNewShape(startingBoardRow(), startingBoardColumn());
         }
 
         private Cell[][] boardCellsForNewShape(int startRow, int startCol) {
@@ -255,9 +255,9 @@ public class Board {
         }
 
         //board column at (0,0) of this matrix
-        private int startingBoardColumn(Cell[][] matrix) {
-            for (Cell[] row : matrix) {
-                for (int col = 0; col < matrix[0].length; col++) {
+        public int startingBoardColumn() {
+            for (Cell[] row : shapeCells) {
+                for (int col = 0; col < shapeCells[0].length; col++) {
                     if (row[col] != null) {
                         return row[col].column - col;
                     }
@@ -268,11 +268,11 @@ public class Board {
         }
 
         //board row at (0,0) of this matrix
-        private int startingBoardRow(Cell[][] matrix) {
-            for (int row = 0; row < matrix.length; row++) {
-                for (int col = 0; col < matrix[0].length; col++) {
-                    if (matrix[row][col] != null) {
-                        return matrix[row][col].row - row;
+        public int startingBoardRow() {
+            for (int row = 0; row < shapeCells.length; row++) {
+                for (int col = 0; col < shapeCells[0].length; col++) {
+                    if (shapeCells[row][col] != null) {
+                        return shapeCells[row][col].row - row;
                     }
                 }
             }

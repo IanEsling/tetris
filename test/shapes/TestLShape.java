@@ -11,41 +11,17 @@ import static shapes.ShapeTestUtils.assertBoardPopulation;
 public class TestLShape extends AbstractShapeTest {
 
     @Test
-    public void doNotRotateIfLeftEdgeOfBoard() {
+    public void doNotRotateIfAnyNewCellsArePopulated() {
         board.addNewShape(getNewShape());
-        board.moveShapeToLeft();
-        board.moveShapeToLeft();
-        board.moveShapeToLeft();
-        board.moveShapeToLeft();
-        board.rotateShapeClockwise();
-        populatedCells.add(new Cell(Board.START_ROW + 1, 0));
-        populatedCells.add(new Cell(Board.START_ROW + 1, 1));
-        populatedCells.add(new Cell(Board.START_ROW + 1, 2));
-        populatedCells.add(new Cell(Board.START_ROW + 2, 0));
-        assertBoardPopulation("original L-Shape on left of board", board, populatedCells);
+        populatedCells.add(new Cell(Board.START_ROW, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 1, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
+        populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
+        assertBoardPopulation("original L-Shape on board", board, populatedCells);
+        board.getCell(1, 5).setPopulated(true, board.getMovingShape().getShape());
         board.rotateShapeAntiClockwise();
-        populatedCells.clear();
-        populatedCells.add(new Cell(Board.START_ROW, 0));
-        populatedCells.add(new Cell(Board.START_ROW + 1, 0));
-        populatedCells.add(new Cell(Board.START_ROW + 2, 0));
-        populatedCells.add(new Cell(Board.START_ROW + 2, 1));
-        assertBoardPopulation("L-Shape rotated anti-clockwise on left of board", board, populatedCells);
-        board.moveShapeToRight();
-        board.rotateShapeClockwise();
-        board.moveShapeToLeft();
-        populatedCells.clear();
-        populatedCells.add(new Cell(Board.START_ROW + 1, 0));
-        populatedCells.add(new Cell(Board.START_ROW + 1, 1));
-        populatedCells.add(new Cell(Board.START_ROW + 1, 2));
-        populatedCells.add(new Cell(Board.START_ROW + 2, 0));
-        assertBoardPopulation("L-Shape rotated clockwise on left edge", board, populatedCells);
-        board.rotateShapeClockwise();
-        populatedCells.clear();
-        populatedCells.add(new Cell(Board.START_ROW + 1, 0));
-        populatedCells.add(new Cell(Board.START_ROW + 1, 1));
-        populatedCells.add(new Cell(Board.START_ROW + 2, 1));
-        populatedCells.add(new Cell(Board.START_ROW + 3, 1));
-        assertBoardPopulation("L-Shape rotated clockwise once more on left edge", board, populatedCells);
+        populatedCells.add(new Cell(1, 5));
+        assertBoardPopulation("original L-Shape on board after anti-clockwise attempt", board, populatedCells);
     }
 
     @Test

@@ -18,7 +18,7 @@ public class Cell {
         colour = Board.DEFAULT_EMPTY_COLOUR;
     }
 
-    Cell setPopulated(boolean populated, Shape shape) {
+    public Cell setPopulated(boolean populated, Shape shape) {
         this.populated = populated;
         colour = ((populated && shape!=null) ? shape.getColour() : Board.DEFAULT_EMPTY_COLOUR);
         return this;
