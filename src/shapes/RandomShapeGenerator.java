@@ -15,7 +15,10 @@ public class RandomShapeGenerator {
     }
 
     public static Shape getNewShapeAtRandom() {
-        Integer number = new Random().nextInt(3);
-        return Shapes.values()[number].getShape();
+        return Shapes.values()[randomShapeIndex()].getShape();
+    }
+
+    private static int randomShapeIndex() {
+        return new Random().nextInt(Shapes.values().length);
     }
 }

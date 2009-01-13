@@ -17,8 +17,8 @@ import java.beans.PropertyChangeListener;
 /**
  */
 public class BoardGui extends JPanel {
-    List<CellGui> cellGuis;
-    private Board board;
+    private List<CellGui> cellGuis;
+    private final Board board;
 
     public BoardGui(int x, int y) {
         setLayout(new GridLayout(x, y));

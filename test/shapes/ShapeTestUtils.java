@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 import static org.junit.Assert.assertEquals;
 
-public class ShapeTestUtils {
+class ShapeTestUtils {
 
     public static Map<Integer, Integer> map(int x, int y) {
         Map<Integer, Integer> map = new HashMap<Integer, Integer>();
@@ -46,7 +46,7 @@ public class ShapeTestUtils {
                 populated, board.getCell(x, y).isPopulated());
     }
 
-    public static List<Cell> listOfPopulatedCells(Board board) {
+    private static List<Cell> listOfPopulatedCells(Board board) {
         List<Cell> populatedCells = new ArrayList<Cell>();
         for (Cell cell : board.getCells()) {
             if (cell.isPopulated()) populatedCells.add(cell);

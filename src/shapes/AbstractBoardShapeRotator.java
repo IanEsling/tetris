@@ -12,12 +12,12 @@ import util.ArrayCellCallback;
  */
 public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
 
-    Board board;
+    private Board board;
 
-    public AbstractBoardShapeRotator() {
+    AbstractBoardShapeRotator() {
     }
 
-    public AbstractBoardShapeRotator(Board board) {
+    AbstractBoardShapeRotator(Board board) {
         this.board = board;
     }
 
@@ -124,5 +124,5 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
         return newMatrix;
     }
 
-    public abstract void rotateMatrixPosition(int[][] currentMatrix, int[][] newMatrix, int rowCount, int columnCount, int col);
+    protected abstract void rotateMatrixPosition(int[][] currentMatrix, int[][] newMatrix, int rowCount, int columnCount, int col);
 }

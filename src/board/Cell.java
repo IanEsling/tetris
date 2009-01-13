@@ -7,10 +7,10 @@ import java.awt.*;
 /**
  */
 public class Cell {
-    public int row;
-    public int column;
-    boolean populated;
-    Color colour;
+    public final int row;
+    public final int column;
+    private boolean populated;
+    private Color colour;
 
     public Cell(int row, int column) {
         this.row = row;
@@ -25,8 +25,7 @@ public class Cell {
     }
 
     Cell setPopulated(boolean populated) {
-        setPopulated(populated, null);
-        return this;
+        return setPopulated(populated, null);
     }
 
     Color getColour() {

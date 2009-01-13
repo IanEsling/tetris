@@ -9,7 +9,7 @@ import java.awt.*;
  */
 class CellGui extends JPanel {
 
-    Cell cell;
+    private final Cell cell;
     public final static int CELL_SIZE = 100;
 
     CellGui(Cell cell) {

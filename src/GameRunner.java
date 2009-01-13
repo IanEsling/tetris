@@ -9,9 +9,9 @@ import java.awt.event.KeyListener;
  */
 public class GameRunner {
 
-    BoardGui board;
+    private final BoardGui board;
 
-    GameRunner() throws InterruptedException {
+    private GameRunner() throws InterruptedException {
         board = new BoardGui(30, 10);
         newApp(board);
         start();
@@ -38,7 +38,7 @@ public class GameRunner {
         app.addKeyListener(new ShapeMover());
     }
 
-    class ShapeMover implements KeyListener {
+    private class ShapeMover implements KeyListener {
 
         @Override
         public void keyTyped(KeyEvent e) {

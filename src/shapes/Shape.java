@@ -6,14 +6,14 @@ import java.awt.*;
  */
 public abstract class Shape {
 
-    public int[][] cells;
+    final int[][] cells;
 
-    public Shape() {
+    Shape() {
         cells = new int[4][4];
         setShapeCells();
     }
 
-    public abstract void setShapeCells();
+    protected abstract void setShapeCells();
 
     public abstract Color getColour();
 

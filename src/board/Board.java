@@ -17,16 +17,16 @@ import java.util.List;
 /**
  */
 public class Board {
-    int rows, columns;
-    List<Cell> cells;
-    public static int START_ROW = 0;
-    public static int END_ROW = 3;
-    public static int START_COL = 3;
-    public static int END_COL = 6;
-    public static Color DEFAULT_EMPTY_COLOUR = Color.gray;
+    private final int rows; private final int columns;
+    private List<Cell> cells;
+    public static final int START_ROW = 0;
+    private static final int END_ROW = 3;
+    public static final int START_COL = 3;
+    private static final int END_COL = 6;
+    public static final Color DEFAULT_EMPTY_COLOUR = Color.gray;
     protected MovingShape movingShape;
-    boolean gameOver = false;
-    RotatorFactory rotators;
+    private boolean gameOver = false;
+    private final RotatorFactory rotators;
 
 
     public boolean gameOver() {
@@ -34,7 +34,7 @@ public class Board {
     }
 
     static class RotatorFactory {
-        BoardShapeRotator clockwiseBoardShapeRotator, antiClockwiseBoardShapeRotator;
+        final BoardShapeRotator clockwiseBoardShapeRotator; final BoardShapeRotator antiClockwiseBoardShapeRotator;
 
         RotatorFactory(Board board) {
             clockwiseBoardShapeRotator = new ClockwiseBoardShapeRotator(board);
@@ -88,7 +88,9 @@ public class Board {
                 addNewShapeAtRandom();
                 removeCompletedRows();
             }
-            movingShape.move(1, 0);//move down one row
+            if (!movingShapeCannotMoveDownAnymore()){
+                movingShape.move(1, 0);//move down one row
+            }
         }
     }
 
@@ -150,7 +152,7 @@ public class Board {
     public class MovingShape {
 
         Cell[][] shapeCells;
-        Shape shape;
+        final Shape shape;
 
         public MovingShape(Shape shape) {
             this.shape = shape;
@@ -177,7 +179,7 @@ public class Board {
 
                 //trying to move sideways into a populated cell
                 if (columns != 0 && cellAt(cell.row, cell.column + columns).isPopulated() &&
-                        (!movingShape.shapeCellsAsList().contains(new Cell(cell.row, cell.column + columns))))
+                        (!shapeCellsAsList().contains(new Cell(cell.row, cell.column + columns))))
                     return false;
             }
             return true;
@@ -199,12 +201,6 @@ public class Board {
                     shapeCells[row][col] = setNewCell(rows, columns, shapeCells[row][col]);
                 }
             });
-
-//            for (int row = 0; row < shapeCells.length; row++) {
-//                for (int column = 0; column < shapeCells[0].length; column++) {
-//
-//                }
-//            }
         }
 
         private Cell setNewCell(int rows, int columns, Cell cell) {
@@ -305,14 +301,6 @@ public class Board {
                     cells[row][col].setPopulated(populated, getMovingShape().getShape());
             }
         }});
-
-//        for (Cell[] cell : cells) {
-//            for (int col = 0; col < cells[0].length; col++) {
-//                if (cell[col] != null) {
-//                    cell[col].setPopulated(populated, getMovingShape().getShape());
-//                }
-//            }
-//        }
     }
 
     public MovingShape getMovingShape() {
