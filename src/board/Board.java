@@ -1,11 +1,8 @@
 package board;
 
-import static board.Board.Movement.*;
-import static board.Board.Rotation.AntiClockwise;
-import static board.Board.Rotation.Clockwise;
-import shapes.AntiClockwiseBoardShapeRotator;
-import shapes.BoardShapeRotator;
-import shapes.ClockwiseBoardShapeRotator;
+import static board.Movement.*;
+import static board.Rotation.AntiClockwise;
+import static board.Rotation.Clockwise;
 import static shapes.RandomShapeGenerator.getNewShapeAtRandom;
 import shapes.Shape;
 import util.ArrayCellCallback;
@@ -35,118 +32,11 @@ public class Board {
         return gameOver;
     }
 
-    static class RotatorFactory {
-        final BoardShapeRotator clockwiseBoardShapeRotator;
-        final BoardShapeRotator antiClockwiseBoardShapeRotator;
-
-        RotatorFactory(Board board) {
-            clockwiseBoardShapeRotator = new ClockwiseBoardShapeRotator(board);
-            antiClockwiseBoardShapeRotator = new AntiClockwiseBoardShapeRotator(board);
-        }
-
-        BoardShapeRotator get(Rotation rotation) {
-            return rotation == Rotation.AntiClockwise ? antiClockwiseBoardShapeRotator : clockwiseBoardShapeRotator;
-        }
-    }
-
-    enum Rotation {
-        Clockwise,
-        AntiClockwise
-    }
-
-    public enum Movement {
-        Left {
-            @Override
-            int getRowChange() {
-                return 0;
-            }
-            @Override
-            int getColumnChange() {
-                return -1;
-            }
-            @Override
-            boolean allowMove(Cell cell, int boardColumns, int boardRows) {
-                return cell.column != 0;
-            }},
-        Right {
-            @Override
-            int getRowChange() {
-                return 0;
-            }
-            @Override
-            int getColumnChange() {
-                return 1;
-            }
-            @Override
-            boolean allowMove(Cell cell, int boardColumns, int boardRows) {
-                return cell.column != boardColumns - 1;
-            }},
-        Down {
-            @Override
-            int getRowChange() {
-                return 1;
-            }
-            @Override
-            int getColumnChange() {
-                return 0;
-            }
-            @Override
-            boolean allowMove(Cell cell, int boardColumns, int boardRows) {
-                return cell.row != boardRows - 1;
-            }};
-
-        abstract int getRowChange();
-
-        abstract int getColumnChange();
-
-        abstract boolean allowMove(Cell cell, int boardColumns, int boardRows);
-    }
-
-    interface MovementValidator {
-        boolean canMove(Movement movement);
-    }
-
-    class MovementValidatorImpl implements MovementValidator {
-        MovingShape movingShape;
-
-        MovementValidatorImpl(MovingShape movingShape) {
-            this.movingShape = movingShape;
-        }
-
-        List<Cell> shapeCells() {
-            return movingShape.shapeCellsAsList();
-        }
-
-        @Override
-        public boolean canMove(Movement movement) {
-            for (Cell cell : shapeCells()) {
-                if (newCellIsAlreadyPopulated(movement, cell))
-                    return false;
-
-                if (!movement.allowMove(cell, getColumns(), getRows())) return false;
-            }
-            return true;
-        }
-
-        private boolean newCellIsAlreadyPopulated(Movement movement, Cell cell) {
-            return cellAt(newRow(movement, cell), newCol(movement, cell)).isPopulated() &&
-                    (!shapeCells().contains(new Cell(newRow(movement, cell), newCol(movement, cell))));
-        }
-
-        private int newCol(Movement movement, Cell cell) {
-            return cell.column + movement.getColumnChange() > getColumns() - 1 ? getColumns() - 1 :
-                    (cell.column + movement.getColumnChange() < 0 ? 0 : cell.column + movement.getColumnChange());
-        }
-
-        private int newRow(Movement movement, Cell cell) {
-            return cell.row + movement.getRowChange() > getRows() - 1 ? getRows() - 1 : cell.row + movement.getRowChange();
-        }
-    }
-
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         rotators = new RotatorFactory(this);
+        movementValidator = new MovingShapeMovementValidator(this);
         createBoardCells(rows, columns);
     }
 
@@ -243,7 +133,6 @@ public class Board {
         public MovingShape(Shape shape) {
             this.shape = shape;
             shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
-            movementValidator = new MovementValidatorImpl(this);
         }
 
         void moveToRight() {
@@ -254,13 +143,12 @@ public class Board {
             move(Left);
         }
 
-        boolean canMove(Movement movement) {
-            return movementValidator.canMove(movement);
-        }
-
         synchronized void move(Movement movement) {
             if (canMove(movement)) setCellsForNewPosition(movement);
+        }
 
+        boolean canMove(Movement movement) {
+            return movementValidator.canMove(movement);
         }
 
         private void setCellsForNewPosition(final Movement movement) {
@@ -401,6 +289,10 @@ public class Board {
 
     public int getRows() {
         return rows;
+    }
+
+    Board getBoard(){
+        return this;
     }
 
     private void createBoardCells(int rows, int columns) {
