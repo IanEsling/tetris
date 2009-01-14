@@ -23,11 +23,11 @@ class MovingShapeMovementValidator implements MovementValidator {
     }
 
     List<Cell> shapeCells() {
-        return board.getMovingShape().shapeCellsAsList();
+        return board.getMovingShape().mapper.shapeCellsAsList();
     }
 
     private boolean newCellIsAlreadyPopulated(Movement movement, Cell cell) {
-        return board.cellAt(newRow(movement, cell), newCol(movement, cell)).isPopulated() &&
+        return board.getCell(newRow(movement, cell), newCol(movement, cell)).isPopulated() &&
                 (!shapeCells().contains(new Cell(newRow(movement, cell), newCol(movement, cell))));
     }
 

@@ -22,6 +22,7 @@ public class TestXLShape extends AbstractShapeTest {
         board.moveShapeToLeft();
         board.moveShapeToLeft();
         board.moveShapeToLeft();
+        board.moveShapeToLeft();
         board.rotateShapeAntiClockwise();
         populatedCells.clear();
         populatedCells.add(new Cell(Board.START_ROW, 0));

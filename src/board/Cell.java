@@ -24,6 +24,10 @@ public class Cell {
         return this;
     }
 
+    Cell setPopulated(Shape shape){
+        return setPopulated(true, shape);
+    }
+
     Cell setPopulated(boolean populated) {
         return setPopulated(populated, null);
     }

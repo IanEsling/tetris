@@ -36,11 +36,11 @@ public class TestCellGui {
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[0].length; col++) {
                 if (cells[row][col] == 0){
-                    assertFalse("cell populated when should be empty", board.getBoard().cellAt(Board.START_ROW + row, Board.START_COL + col).isPopulated());
+                    assertFalse("cell populated when should be empty", board.getBoard().getCell(Board.START_ROW + row, Board.START_COL + col).isPopulated());
                     assertEquals("unpopulated cell not empty colour", Board.DEFAULT_EMPTY_COLOUR, cellGuiAt(row + Board.START_ROW, col + Board.START_COL, board).getColour());
                 }
                 else{
-                    assertTrue("cell empty when should be populated", board.getBoard().cellAt(Board.START_ROW + row, Board.START_COL + col).isPopulated());
+                    assertTrue("cell empty when should be populated", board.getBoard().getCell(Board.START_ROW + row, Board.START_COL + col).isPopulated());
                     assertEquals("populated cell not correct shape colour", 
                             board.getBoard().getMovingShape().getShape().getColour(),
                             cellGuiAt(row + Board.START_ROW, col + Board.START_COL, board).getColour());
