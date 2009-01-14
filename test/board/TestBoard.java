@@ -187,9 +187,9 @@ public class TestBoard {
             testee.tick();
         }
         assertTrue("moving shape isn't original square", testee.getMovingShape().getShape() == originalSquare);
-        List<Cell> originalCells = testee.getMovingShape().mapper.shapeCellsAsList();
+        List<Cell> originalCells = testee.mapper.shapeCellsAsList();
         testee.moveShapeToRight();
-        assertEquals(originalCells, testee.getMovingShape().mapper.shapeCellsAsList());
+        assertEquals(originalCells, testee.mapper.shapeCellsAsList());
 
     }
 
@@ -209,7 +209,7 @@ public class TestBoard {
     @Test
     public void moveShapeAround() {
         testee.addNewShape(new LShape());
-        List<Cell> startCells = testee.getMovingShape().mapper.shapeCellsAsList();
+        List<Cell> startCells = testee.mapper.shapeCellsAsList();
         testee.moveShapeToLeft();
         assertShapeHasMoved(startCells, 0, -1);
         testee.moveShapeToLeft();
@@ -240,7 +240,7 @@ public class TestBoard {
     }
 
     private void assertShapeHasMoved(List<Cell> startCells, int rows, int columns) {
-        List<Cell> newCells = testee.getMovingShape().mapper.shapeCellsAsList();
+        List<Cell> newCells = testee.mapper.shapeCellsAsList();
         assertEquals("start and new cells not same size", startCells.size(), newCells.size());
         for (Cell cell : startCells) {
             assertTrue("testee doesn't contain new cell, rows:" + rows + ", columns:" + columns +

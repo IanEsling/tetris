@@ -23,7 +23,7 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
 
     public void rotate() {
         int[][] currentMatrix = board.getMovingShape().getShape().getCells();
-        List<Cell> shapeCells = board.getMovingShape().mapper.shapeCellsAsList();
+        List<Cell> shapeCells = board.mapper.shapeCellsAsList();
         int[][] newMatrix = getRotatedMatrix(currentMatrix);
         if (!shapeWillRotateOffBoard(currentMatrix, shapeCells, newMatrix) &&
                 !rotatedShapeWillOccupyAPopulatedCell(newMatrix)) {
@@ -59,7 +59,7 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
             for (int col = 0; col < newMatrix[0].length; col++) {
                 if (boardCellAt(row, col).isPopulated() &&
                         newMatrix[row][col] == 1 &&
-                        !(board.getMovingShape().mapper.shapeCellsAsList().contains(boardCellAt(row, col)))) return true;
+                        !(board.mapper.shapeCellsAsList().contains(boardCellAt(row, col)))) return true;
             }
         }
         return false;
@@ -70,19 +70,19 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
     }
 
     private int boardCol(int col) {
-        return (board.getMovingShape().mapper.startingBoardColumn() + col) >= board.getColumns() ?
+        return (board.mapper.startingBoardColumn() + col) >= board.getColumns() ?
                 board.getColumns() - 1 :
-                (board.getMovingShape().mapper.startingBoardColumn() + col) < 0 ?
+                (board.mapper.startingBoardColumn() + col) < 0 ?
                         0 :
-                        board.getMovingShape().mapper.startingBoardColumn() + col;
+                        board.mapper.startingBoardColumn() + col;
     }
 
     private int boardRow(int row) {
-        return (board.getMovingShape().mapper.startingBoardRow() + row) >= board.getRows() ?
+        return (board.mapper.startingBoardRow() + row) >= board.getRows() ?
                 board.getRows() - 1 :
-                (board.getMovingShape().mapper.startingBoardRow() + row) < 0 ?
+                (board.mapper.startingBoardRow() + row) < 0 ?
                         0 :
-                        board.getMovingShape().mapper.startingBoardRow() + row;
+                        board.mapper.startingBoardRow() + row;
     }
 
     private boolean shapeWillMoveToRight(int[][] newMatrix, int[][] currentMatrix) {

@@ -19,6 +19,7 @@ public class Board {
     private final int rows;
     private final int columns;
     private Cell[][] boardCells;
+    public ShapeCellBoardMapper mapper;
     public static final int START_ROW = 0;
     private static final int END_ROW = 3;
     public static final int START_COL = 3;
@@ -103,7 +104,7 @@ public class Board {
     }
 
     private List<Cell> movingShapeCells() {
-        return movingShape.mapper.shapeCellsAsList();
+        return mapper.shapeCellsAsList();
     }
 
     private List<Cell> cellsInRow(int row) {
@@ -134,7 +135,7 @@ public class Board {
 
         Shape shape;
         Cell[][] shapeCells;
-        int zeroIndexRow, zeroIndexColumn;
+        int zeroIndexRow, zeroIndexColumn;//cell at (0,0) of the shape matrix
 
         ShapeCellBoardMapper(MovingShape movingShape) {
             this.shape = movingShape.getShape();
@@ -222,7 +223,6 @@ public class Board {
 
     public class MovingShape {
 
-        public ShapeCellBoardMapper mapper;
         final Shape shape;
 
         public MovingShape(Shape shape) {
