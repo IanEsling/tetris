@@ -139,7 +139,7 @@ public class TestBoard {
         Movement movement = colsToMove>0? Right: Left;
 
         for (int i = 0; i < Math.abs(colsToMove); i++) {
-            testee.getMovingShape().move(movement);
+            testee.move(movement);
         }
 
         moveShapeToBottom();
@@ -178,15 +178,15 @@ public class TestBoard {
         for (int i = 0; i < 28; i++) {
             testee.tick();
         }
-        assertNotNull("moving shape is null", testee.getMovingShape());
-        assertFalse("moving shape is still original square", testee.getMovingShape().getShape() == originalSquare);
-        originalSquare = testee.getMovingShape().getShape();
+        assertNotNull("moving shape is null", testee.mapper.getShape());
+        assertFalse("moving shape is still original square", testee.mapper.getShape() == originalSquare);
+        originalSquare = testee.mapper.getShape();
         testee.moveShapeToLeft();
         testee.moveShapeToLeft();
         for (int i = 0; i < 26; i++) {
             testee.tick();
         }
-        assertTrue("moving shape isn't original square", testee.getMovingShape().getShape() == originalSquare);
+        assertTrue("moving shape isn't original square", testee.mapper.getShape() == originalSquare);
         List<Cell> originalCells = testee.mapper.shapeCellsAsList();
         testee.moveShapeToRight();
         assertEquals(originalCells, testee.mapper.shapeCellsAsList());
@@ -200,10 +200,10 @@ public class TestBoard {
         for (int i = 0; i < 27; i++) {
             testee.tick();
         }
-        assertEquals("moving shape not original", originalShape, testee.getMovingShape().getShape());
+        assertEquals("moving shape not original", originalShape, testee.mapper.getShape());
         testee.tick();
-        assertNotNull("moving shape is null", testee.getMovingShape());
-        assertNotSame("still moving original shape", testee.getMovingShape().getShape(), originalShape);
+        assertNotNull("moving shape is null", testee.mapper.getShape());
+        assertNotSame("still moving original shape", testee.mapper.getShape(), originalShape);
     }
 
     @Test
@@ -257,14 +257,14 @@ public class TestBoard {
     public void boardKnowsShapeIsMoving() {
         Shape movingShape = new Square();
         testee.addNewShape(movingShape);
-        assertNotNull("failed to set moving shape", testee.getMovingShape());
+        assertNotNull("failed to set moving shape", testee.mapper.getShape());
         for (int i = 0; i < 27; i++) {//relies on square being 2 cells tall
             testee.tick();
         }
-        assertNotNull("shape should still be moving", testee.getMovingShape());
+        assertNotNull("shape should still be moving", testee.mapper.getShape());
 
         testee.tick();
-        assertNotSame("shape shouldn't be moving anymore", movingShape, testee.getMovingShape());
+        assertNotSame("shape shouldn't be moving anymore", movingShape, testee.mapper.getShape());
     }
 
     @Test

@@ -18,7 +18,7 @@ public class TestLShape extends AbstractShapeTest {
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 1));
         populatedCells.add(new Cell(Board.START_ROW + 2, Board.START_COL + 2));
         assertBoardPopulation("original L-Shape on board", board, populatedCells);
-        board.getCell(1, 5).setPopulated(true, board.getMovingShape().getShape());
+        board.getCell(1, 5).setPopulated(true, board.mapper.getShape());
         board.rotateShapeAntiClockwise();
         populatedCells.add(new Cell(1, 5));
         assertBoardPopulation("original L-Shape on board after anti-clockwise attempt", board, populatedCells);

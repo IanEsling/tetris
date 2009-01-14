@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.w3c.dom.html.HTMLTableRowElement;
+
 /**
  */
 public class Board {
@@ -25,7 +27,6 @@ public class Board {
     public static final int START_COL = 3;
     private static final int END_COL = 6;
     public static final Color DEFAULT_EMPTY_COLOUR = Color.gray;
-    protected MovingShape movingShape;
     private boolean gameOver = false;
     private final RotatorFactory rotators;
     private MovementValidator movementValidator;
@@ -43,15 +44,23 @@ public class Board {
     }
 
     public void moveShapeToRight() {
-        movingShape.moveToRight();
+        move(Right);
     }
 
     public void moveShapeToLeft() {
-        movingShape.moveToLeft();
+        move(Left);
+    }
+
+    synchronized void move(Movement movement) {
+        if (canMove(movement)) mapper.moveShapeCells(movement);
+    }
+
+    boolean canMove(Movement movement) {
+        return movementValidator.canMove(movement);
     }
 
     public void addNewShape(Shape shape) {
-        if (canAddNewShape()) movingShape = new MovingShape(shape);
+        if (canAddNewShape()) mapper = new ShapeCellBoardMapper(shape);
         else
             gameOver = true;
     }
@@ -66,14 +75,11 @@ public class Board {
     }
 
     public void tick() {
-        if (movingShape != null) {
-            //don't check after moving, so player can still move sideways before next tick
-            if (!movingShapeCanMoveDown()) {
-                addNewShapeAtRandom();
-                removeCompletedRows();
-            }
-            movingShape.move(Down);
+        if (!movingShapeCanMoveDown()) {
+            addNewShapeAtRandom();
+            removeCompletedRows();
         }
+        move(Down);
     }
 
     private void removeCompletedRows() {
@@ -120,25 +126,35 @@ public class Board {
     }
 
     public boolean movingShapeCanMoveDown() {
-        return movingShape.canMove(Down);
+        return canMove(Down);
     }
 
     public void rotateShapeClockwise() {
-        movingShape.rotate(Clockwise);
+        rotate(Clockwise);
     }
 
     public void rotateShapeAntiClockwise() {
-        movingShape.rotate(AntiClockwise);
+        rotate(AntiClockwise);
+    }
+
+    public void rotate(Rotation rotation) {
+        mapper.setNewShapeCells(rotateCells(rotation));
+    }
+
+    private Cell[][] rotateCells(Rotation rotation) {
+        rotators.get(rotation).rotate();
+
+        return mapper.mapNewShapeToBoardCells();
     }
 
     public class ShapeCellBoardMapper {
 
-        Shape shape;
+        public Shape shape;
         Cell[][] shapeCells;
         int zeroIndexRow, zeroIndexColumn;//cell at (0,0) of the shape matrix
 
-        ShapeCellBoardMapper(MovingShape movingShape) {
-            this.shape = movingShape.getShape();
+        ShapeCellBoardMapper(Shape shape) {
+            this.shape = shape;
             shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
         }
 
@@ -219,50 +235,10 @@ public class Board {
                 }
             });
         }
-    }
-
-    public class MovingShape {
-
-        final Shape shape;
-
-        public MovingShape(Shape shape) {
-            this.shape = shape;
-            mapper = new ShapeCellBoardMapper(this);
-        }
-
-        void moveToRight() {
-            move(Right);
-        }
-
-        void moveToLeft() {
-            move(Left);
-        }
-
-        synchronized void move(Movement movement) {
-            if (canMove(movement)) mapper.moveShapeCells(movement);
-        }
-
-        boolean canMove(Movement movement) {
-            return movementValidator.canMove(movement);
-        }
-
-        public void rotate(Rotation rotation) {
-            mapper.setNewShapeCells(rotateCells(rotation));
-        }
-
-        private Cell[][] rotateCells(Rotation rotation) {
-            rotators.get(rotation).rotate();
-
-            return mapper.mapNewShapeToBoardCells();
-        }
 
         public Shape getShape() {
             return shape;
         }
-    }
-
-    public MovingShape getMovingShape() {
-        return movingShape;
     }
 
     public List<Cell> getBoardCells() {

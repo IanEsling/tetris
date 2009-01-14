@@ -10,6 +10,7 @@ import shapes.Square;
 
 /**
  */
+@SuppressWarnings({"PointlessArithmeticExpression"})
 public class TestCellGui {
 
     @Test
@@ -32,25 +33,24 @@ public class TestCellGui {
         BoardGui board = new BoardGui(30, 10);
         board.addNewShape(new LShape());
         board.getBoard().rotateShapeAntiClockwise();
-        int[][] cells = board.getBoard().getMovingShape().getShape().getCells();
+        int[][] cells = board.getBoard().mapper.getShape().getCells();
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[0].length; col++) {
-                if (cells[row][col] == 0){
+                if (cells[row][col] == 0) {
                     assertFalse("cell populated when should be empty", board.getBoard().getCell(Board.START_ROW + row, Board.START_COL + col).isPopulated());
                     assertEquals("unpopulated cell not empty colour", Board.DEFAULT_EMPTY_COLOUR, cellGuiAt(row + Board.START_ROW, col + Board.START_COL, board).getColour());
-                }
-                else{
+                } else {
                     assertTrue("cell empty when should be populated", board.getBoard().getCell(Board.START_ROW + row, Board.START_COL + col).isPopulated());
-                    assertEquals("populated cell not correct shape colour", 
-                            board.getBoard().getMovingShape().getShape().getColour(),
+                    assertEquals("populated cell not correct shape colour",
+                            board.getBoard().mapper.getShape().getColour(),
                             cellGuiAt(row + Board.START_ROW, col + Board.START_COL, board).getColour());
                 }
             }
         }
     }
 
-    private CellGui cellGuiAt(int row, int col, BoardGui board){
-        for (CellGui cell : board.getCellGuis()){
+    private CellGui cellGuiAt(int row, int col, BoardGui board) {
+        for (CellGui cell : board.getCellGuis()) {
             if (cell.underlying().row == row && cell.underlying().column == col) return cell;
         }
         throw new RuntimeException();

@@ -22,7 +22,7 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
     }
 
     public void rotate() {
-        int[][] currentMatrix = board.getMovingShape().getShape().getCells();
+        int[][] currentMatrix = board.mapper.shape.getCells();
         List<Cell> shapeCells = board.mapper.shapeCellsAsList();
         int[][] newMatrix = getRotatedMatrix(currentMatrix);
         if (!shapeWillRotateOffBoard(currentMatrix, shapeCells, newMatrix) &&

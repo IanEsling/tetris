@@ -49,7 +49,7 @@ public abstract class AbstractShapeTest {
     }
 
     void moveShapeToBottom() {
-        while(board.movingShapeCanMoveDown()){
+        while (board.movingShapeCanMoveDown()) {
             board.tick();
         }
     }
@@ -63,10 +63,10 @@ public abstract class AbstractShapeTest {
 
     @Before
     public void createBoard() {
-        board = new Board(30, 10){
+        board = new Board(30, 10) {
             @Override
             public void addNewShapeAtRandom() {
-                movingShape = new MovingShape(getNewShape());
+                addNewShape(getNewShape());
             }
         };//30 rows, 10 columns
         populatedCells = new ArrayList<Cell>();
