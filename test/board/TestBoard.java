@@ -55,7 +55,7 @@ public class TestBoard {
         testee.tick();
         assertRowPopulation(26, false);
         assertRowPopulation(27, false);
-        for (Cell cell : testee.getCells()){
+        for (Cell cell : testee.getBoardCells()){
             if (cell.row == 28 || cell.row == 29){
                 if (cell.column == 4 || cell.column == 5){
                     assertFalse("bottom cell not empty as expected: "+populatedCells(), cell.isPopulated());
@@ -68,7 +68,7 @@ public class TestBoard {
     }
 
     private void assertRowPopulation(int row, boolean populated) {
-        for (Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getBoardCells()) {
             if (cell.row == row) assertTrue("row "+row+" not populated: "+populatedCells(),
                     populated ? cell.isPopulated() : !cell.isPopulated());
         }
@@ -88,9 +88,9 @@ public class TestBoard {
         moveShapeToBottom();
         moveSidewaysThenToBottom(2);
         moveSidewaysThenToBottom(4);
-        assertTrue("new moving shape in wrong position: " + testee.getCells(),
+        assertTrue("new moving shape in wrong position: " + testee.getBoardCells(),
                 testee.cellAt(1, 4).isPopulated());
-        for (Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getBoardCells()) {
             if (cell.row == 29 || cell.row == 28) assertTrue("bottom row not populated correctly: " + populatedCells(),
                     cell.column % 2 == 1 ? !cell.isPopulated() : cell.isPopulated());
             if (cell.row == 27) assertFalse(cell.isPopulated());
@@ -112,7 +112,7 @@ public class TestBoard {
         rotateClockwiseMoveSidewaysThenToBottom(2);
         rotateClockwiseMoveSidewaysThenToBottom(5);
         assertNewMovingShapeHasNotMoved();
-        for (Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getBoardCells()) {
             if (cell.row == 29) assertTrue("bottom row not populated correctly: " + populatedCells(),
                     cell.column % 3 > 0 ? !cell.isPopulated() : cell.isPopulated());
             if (cell.row == 28) assertFalse("row 28 shouldn't be populated: " + populatedCells(), cell.isPopulated());
@@ -120,13 +120,13 @@ public class TestBoard {
     }
 
     private void assertNewMovingShapeHasNotMoved() {
-        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getCells(),
+        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getBoardCells(),
                 testee.cellAt(1, 4).isPopulated());
-        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getCells(),
+        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getBoardCells(),
                 testee.cellAt(2, 4).isPopulated());
-        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getCells(),
+        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getBoardCells(),
                 testee.cellAt(3, 4).isPopulated());
-        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getCells(),
+        assertTrue("new moving shape shouldn't have moved when row removed: " + testee.getBoardCells(),
                 testee.cellAt(3, 5).isPopulated());
     }
 
@@ -147,7 +147,7 @@ public class TestBoard {
 
     private List<Cell> populatedCells() {
         List<Cell> populatedCells = new ArrayList<Cell>();
-        for (Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getBoardCells()) {
             if (cell.isPopulated()) populatedCells.add(cell);
         }
         return populatedCells;
@@ -244,8 +244,8 @@ public class TestBoard {
         assertEquals("start and new cells not same size", startCells.size(), newCells.size());
         for (Cell cell : startCells) {
             assertTrue("testee doesn't contain new cell, rows:" + rows + ", columns:" + columns +
-                    " for cell: " + cell + ".  Testee Cells: " + testee.getCells(),
-                    testee.getCells().contains(new Cell(cell.row + rows, cell.column + columns)));
+                    " for cell: " + cell + ".  Testee Cells: " + testee.getBoardCells(),
+                    testee.getBoardCells().contains(new Cell(cell.row + rows, cell.column + columns)));
             assertTrue("shape not moved as expected, rows=" + rows + ",columns=" + columns +
                     ", newCells: " + newCells +
                     ", startCells: " + startCells,
@@ -271,12 +271,12 @@ public class TestBoard {
     public void cellsInBoard() {
         assertEquals("testee cells height wrong", 29, maxCellHeight());
         assertEquals("testee cells width wrong", 9, maxCellWidth());
-        assertNotNull("cells not initialised", testee.getCells().get(0));
+        assertNotNull("cells not initialised", testee.getBoardCells().get(0));
     }
 
     private int maxCellHeight() {
         int height = 0;
-        for (Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getBoardCells()) {
             if (cell.row > height) height = cell.row;
         }
         return height;
@@ -284,7 +284,7 @@ public class TestBoard {
 
     private int maxCellWidth() {
         int width = 0;
-        for (Cell cell : testee.getCells()) {
+        for (Cell cell : testee.getBoardCells()) {
             if (cell.column > width) width = cell.column;
         }
         return width;

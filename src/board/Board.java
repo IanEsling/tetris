@@ -63,6 +63,10 @@ public class Board {
             @Override
             int getColumnChange() {
                 return -1;
+            }
+            @Override
+            boolean allowMove(Cell cell, int boardColumns, int boardRows) {
+                return cell.column != 0;
             }},
         Right {
             @Override
@@ -72,6 +76,10 @@ public class Board {
             @Override
             int getColumnChange() {
                 return 1;
+            }
+            @Override
+            boolean allowMove(Cell cell, int boardColumns, int boardRows) {
+                return cell.column != boardColumns - 1;
             }},
         Down {
             @Override
@@ -81,11 +89,17 @@ public class Board {
             @Override
             int getColumnChange() {
                 return 0;
+            }
+            @Override
+            boolean allowMove(Cell cell, int boardColumns, int boardRows) {
+                return cell.row != boardRows - 1;
             }};
 
         abstract int getRowChange();
 
         abstract int getColumnChange();
+
+        abstract boolean allowMove(Cell cell, int boardColumns, int boardRows);
     }
 
     interface MovementValidator {
@@ -106,27 +120,22 @@ public class Board {
         @Override
         public boolean canMove(Movement movement) {
             for (Cell cell : shapeCells()) {
-                //cell is on right edge and attempt to move right
-                if (cell.column == getColumns() - 1 && movement == Right)
+                if (newCellIsAlreadyPopulated(movement, cell))
                     return false;
 
-                //cell is on left edge and attempt to move left
-                if (cell.column == 0 && movement == Left)
-                    return false;
-
-                //trying to move into a populated cell
-                if (cellAt(newRow(movement, cell), newCol(movement, cell)).isPopulated() &&
-                        (!shapeCells().contains(new Cell(newRow(movement, cell), newCol(movement, cell)))))
-                    return false;
-
-                //trying to move down at bottom of board
-                if ((cell.row == getRows() - 1) && movement == Down) return false;
+                if (!movement.allowMove(cell, getColumns(), getRows())) return false;
             }
             return true;
         }
 
+        private boolean newCellIsAlreadyPopulated(Movement movement, Cell cell) {
+            return cellAt(newRow(movement, cell), newCol(movement, cell)).isPopulated() &&
+                    (!shapeCells().contains(new Cell(newRow(movement, cell), newCol(movement, cell))));
+        }
+
         private int newCol(Movement movement, Cell cell) {
-            return cell.column + movement.getColumnChange() > getColumns() - 1 ? getColumns() - 1 : cell.column + movement.getColumnChange();
+            return cell.column + movement.getColumnChange() > getColumns() - 1 ? getColumns() - 1 :
+                    (cell.column + movement.getColumnChange() < 0 ? 0 : cell.column + movement.getColumnChange());
         }
 
         private int newRow(Movement movement, Cell cell) {
@@ -138,7 +147,7 @@ public class Board {
         this.rows = rows;
         this.columns = columns;
         rotators = new RotatorFactory(this);
-        setCells(rows, columns);
+        createBoardCells(rows, columns);
     }
 
     public void moveShapeToRight() {
@@ -273,6 +282,7 @@ public class Board {
         }
 
         private void setCurrentCellsToUnpopulated() {
+
             for (Cell cell : shapeCellsAsList()) {
                 cell.setPopulated(false);
             }
@@ -370,7 +380,7 @@ public class Board {
         return movingShape;
     }
 
-    public List<Cell> getCells() {
+    public List<Cell> getBoardCells() {
         return cells;
     }
 
@@ -393,23 +403,12 @@ public class Board {
         return rows;
     }
 
-    private void setCells(int rows, int columns) {
+    private void createBoardCells(int rows, int columns) {
         cells = new ArrayList<Cell>();
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
                 cells.add(new Cell(row, col));
             }
         }
-    }
-
-    private boolean cellIsOnBottomRow(Cell cell) {
-        return cell.row == rows - 1;
-    }
-
-    private boolean somethingBelowCell(Cell cell) {
-        return (cellAt(cell.row + 1, cell.column).isPopulated())//cell below has something in it
-                &&
-                //and it's not because it's one of its own cells
-                (!movingShape.shapeCellsAsList().contains(new Cell(cell.row + 1, cell.column)));
     }
 }

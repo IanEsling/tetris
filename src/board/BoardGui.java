@@ -1,18 +1,12 @@
 package board;
 
-import shapes.Square;
 import shapes.Shape;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyListener;
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Scanner;
-import java.beans.PropertyChangeListener;
 
 /**
  */
@@ -31,7 +25,7 @@ public class BoardGui extends JPanel {
 
     private void createCellGuis() {
         cellGuis = new ArrayList<CellGui>();
-        for (Cell cell : board.getCells()) {
+        for (Cell cell : board.getBoardCells()) {
             CellGui cellGui = new CellGui(cell);
             add(cellGui);
             cellGuis.add(cellGui);

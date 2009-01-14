@@ -23,7 +23,7 @@ class ShapeTestUtils {
     }
 
     public static void assertBoardPopulation(String msg, Board board, List<Cell> populatedCells) {
-        for (Cell cell : board.getCells()) {
+        for (Cell cell : board.getBoardCells()) {
             if (populatedCells.contains(cell))
                 assertBoardCellHasShape(msg, board, cell.row, cell.column);
             else
@@ -48,7 +48,7 @@ class ShapeTestUtils {
 
     private static List<Cell> listOfPopulatedCells(Board board) {
         List<Cell> populatedCells = new ArrayList<Cell>();
-        for (Cell cell : board.getCells()) {
+        for (Cell cell : board.getBoardCells()) {
             if (cell.isPopulated()) populatedCells.add(cell);
         }
         return populatedCells;
