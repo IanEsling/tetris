@@ -10,6 +10,9 @@ import shapes.Square;
 import java.util.ArrayList;
 import java.util.List;
 
+import static board.Board.Movement.Left;
+import static board.Board.Movement.*;
+
 public class TestBoard {
 
     Board testee;
@@ -133,8 +136,10 @@ public class TestBoard {
     }
 
     private void moveSidewaysThenToBottom(int colsToMove) {
+        Board.Movement movement = colsToMove>0? Right: Left;
+
         for (int i = 0; i < Math.abs(colsToMove); i++) {
-            testee.getMovingShape().move(0, (colsToMove > 0 ? 1 : -1));
+            testee.getMovingShape().move(movement);
         }
 
         moveShapeToBottom();
