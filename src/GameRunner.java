@@ -51,7 +51,7 @@ public class GameRunner {
             if (e.getKeyCode() == KeyEvent.VK_UP) board.getBoard().rotateShapeAntiClockwise();
             if (e.getKeyCode() == KeyEvent.VK_DOWN) board.getBoard().rotateShapeClockwise();
             if (e.getKeyCode() == KeyEvent.VK_SPACE){
-                while(!board.getBoard().movingShapeCannotMoveDownAnymore()){
+                while(!board.getBoard().movingShapeCanMoveDown()){
                     board.tick();
                 }
             }

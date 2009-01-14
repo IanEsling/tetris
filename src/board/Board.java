@@ -1,10 +1,8 @@
 package board;
 
+import static board.Board.Movement.*;
 import static board.Board.Rotation.AntiClockwise;
 import static board.Board.Rotation.Clockwise;
-import static board.Board.Movement.Right;
-import static board.Board.Movement.Left;
-import static board.Board.Movement.Down;
 import shapes.AntiClockwiseBoardShapeRotator;
 import shapes.BoardShapeRotator;
 import shapes.ClockwiseBoardShapeRotator;
@@ -20,7 +18,8 @@ import java.util.List;
 /**
  */
 public class Board {
-    private final int rows; private final int columns;
+    private final int rows;
+    private final int columns;
     private List<Cell> cells;
     public static final int START_ROW = 0;
     private static final int END_ROW = 3;
@@ -30,14 +29,15 @@ public class Board {
     protected MovingShape movingShape;
     private boolean gameOver = false;
     private final RotatorFactory rotators;
-
+    private MovementValidator movementValidator;
 
     public boolean gameOver() {
         return gameOver;
     }
 
     static class RotatorFactory {
-        final BoardShapeRotator clockwiseBoardShapeRotator; final BoardShapeRotator antiClockwiseBoardShapeRotator;
+        final BoardShapeRotator clockwiseBoardShapeRotator;
+        final BoardShapeRotator antiClockwiseBoardShapeRotator;
 
         RotatorFactory(Board board) {
             clockwiseBoardShapeRotator = new ClockwiseBoardShapeRotator(board);
@@ -64,7 +64,7 @@ public class Board {
             int getColumnChange() {
                 return -1;
             }},
-        Right{
+        Right {
             @Override
             int getRowChange() {
                 return 0;
@@ -73,7 +73,7 @@ public class Board {
             int getColumnChange() {
                 return 1;
             }},
-        Down{
+        Down {
             @Override
             int getRowChange() {
                 return 1;
@@ -84,6 +84,7 @@ public class Board {
             }};
 
         abstract int getRowChange();
+
         abstract int getColumnChange();
     }
 
@@ -91,10 +92,45 @@ public class Board {
         boolean canMove(Movement movement);
     }
 
-    class MoveLeftValidator implements MovementValidator {
+    class MovementValidatorImpl implements MovementValidator {
+        MovingShape movingShape;
+
+        MovementValidatorImpl(MovingShape movingShape) {
+            this.movingShape = movingShape;
+        }
+
+        List<Cell> shapeCells() {
+            return movingShape.shapeCellsAsList();
+        }
+
         @Override
         public boolean canMove(Movement movement) {
-            return false;  //To change body of implemented methods use File | Settings | File Templates.
+            for (Cell cell : shapeCells()) {
+                //cell is on right edge and attempt to move right
+                if (cell.column == getColumns() - 1 && movement == Right)
+                    return false;
+
+                //cell is on left edge and attempt to move left
+                if (cell.column == 0 && movement == Left)
+                    return false;
+
+                //trying to move into a populated cell
+                if (cellAt(newRow(movement, cell), newCol(movement, cell)).isPopulated() &&
+                        (!shapeCells().contains(new Cell(newRow(movement, cell), newCol(movement, cell)))))
+                    return false;
+
+                //trying to move down at bottom of board
+                if ((cell.row == getRows() - 1) && movement == Down) return false;
+            }
+            return true;
+        }
+
+        private int newCol(Movement movement, Cell cell) {
+            return cell.column + movement.getColumnChange() > getColumns() - 1 ? getColumns() - 1 : cell.column + movement.getColumnChange();
+        }
+
+        private int newRow(Movement movement, Cell cell) {
+            return cell.row + movement.getRowChange() > getRows() - 1 ? getRows() - 1 : cell.row + movement.getRowChange();
         }
     }
 
@@ -131,13 +167,11 @@ public class Board {
     public void tick() {
         if (movingShape != null) {
             //don't check after moving, so player can still move sideways before next tick
-            if (movingShapeCannotMoveDownAnymore()) {
+            if (!movingShapeCanMoveDown()) {
                 addNewShapeAtRandom();
                 removeCompletedRows();
             }
-            if (!movingShapeCannotMoveDownAnymore()){
-                movingShape.move(Down);//move down one row
-            }
+            movingShape.move(Down);
         }
     }
 
@@ -180,12 +214,8 @@ public class Board {
         addNewShape(getNewShapeAtRandom());
     }
 
-    public boolean movingShapeCannotMoveDownAnymore() {
-        for (Cell cell : movingShape.shapeCellsAsList()) {
-            if (cellIsOnBottomRow(cell) || somethingBelowCell(cell))
-                return true;
-        }
-        return false;
+    public boolean movingShapeCanMoveDown() {
+        return movingShape.canMove(Down);
     }
 
     public void rotateShapeClockwise() {
@@ -204,6 +234,7 @@ public class Board {
         public MovingShape(Shape shape) {
             this.shape = shape;
             shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
+            movementValidator = new MovementValidatorImpl(this);
         }
 
         void moveToRight() {
@@ -215,21 +246,7 @@ public class Board {
         }
 
         boolean canMove(Movement movement) {
-            for (Cell cell : shapeCellsAsList()) {
-                //cell is on right edge and attempt to move right
-                if (cell.column == getColumns() - 1 && movement.getColumnChange() > 0)
-                    return false;
-
-                //cell is on left edge and attempt to move left
-                if (cell.column == 0 && movement.getColumnChange() < 0)
-                    return false;
-
-                //trying to move sideways into a populated cell
-                if (movement.getColumnChange() != 0 && cellAt(cell.row, cell.column + movement.getColumnChange()).isPopulated() &&
-                        (!shapeCellsAsList().contains(new Cell(cell.row, cell.column + movement.getColumnChange()))))
-                    return false;
-            }
-            return true;
+            return movementValidator.canMove(movement);
         }
 
         synchronized void move(Movement movement) {
@@ -339,13 +356,14 @@ public class Board {
     }
 
     private void setAllCells(final Cell[][] cells, final boolean populated) {
-        eachCell(cells, new ArrayCellCallback(){
+        eachCell(cells, new ArrayCellCallback() {
             @Override
             public void cell(int row, int col) {
                 if (cells[row][col] != null) {
                     cells[row][col].setPopulated(populated, getMovingShape().getShape());
+                }
             }
-        }});
+        });
     }
 
     public MovingShape getMovingShape() {

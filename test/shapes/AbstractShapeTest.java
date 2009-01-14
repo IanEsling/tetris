@@ -49,7 +49,7 @@ public abstract class AbstractShapeTest {
     }
 
     void moveShapeToBottom() {
-        while(!board.movingShapeCannotMoveDownAnymore()){
+        while(board.movingShapeCanMoveDown()){
             board.tick();
         }
     }

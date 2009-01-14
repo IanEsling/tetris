@@ -154,7 +154,7 @@ public class TestBoard {
     }
 
     private void moveShapeToBottom() {
-        while (!testee.movingShapeCannotMoveDownAnymore()) {
+        while (testee.movingShapeCanMoveDown()) {
             testee.tick();
         }
         testee.tick();
