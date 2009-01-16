@@ -13,15 +13,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.w3c.dom.html.HTMLTableRowElement;
-
 /**
  */
 public class Board {
     private final int rows;
     private final int columns;
     private Cell[][] boardCells;
-    public ShapeCellBoardMapper mapper;
+    public ShapeLayoutToBoardCellMapper mapper;
     public static final int START_ROW = 0;
     private static final int END_ROW = 3;
     public static final int START_COL = 3;
@@ -31,27 +29,23 @@ public class Board {
     private final RotatorFactory rotators;
     private MovementValidator movementValidator;
 
-    public boolean gameOver() {
-        return gameOver;
-    }
-
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         rotators = new RotatorFactory(this);
-        movementValidator = new MovingShapeMovementValidator(this);
+        movementValidator = new ShapeMovementValidator(this);
         createBoardCells(rows, columns);
     }
 
     public void moveShapeToRight() {
-        move(Right);
+        moveShape(Right);
     }
 
     public void moveShapeToLeft() {
-        move(Left);
+        moveShape(Left);
     }
 
-    synchronized void move(Movement movement) {
+    synchronized void moveShape(Movement movement) {
         if (canMove(movement)) mapper.moveShapeCells(movement);
     }
 
@@ -60,7 +54,7 @@ public class Board {
     }
 
     public void addNewShape(Shape shape) {
-        if (canAddNewShape()) mapper = new ShapeCellBoardMapper(shape);
+        if (canAddNewShape()) mapper = new ShapeLayoutToBoardCellMapper(shape);
         else
             gameOver = true;
     }
@@ -79,7 +73,7 @@ public class Board {
             addNewShapeAtRandom();
             removeCompletedRows();
         }
-        move(Down);
+        moveShape(Down);
     }
 
     private void removeCompletedRows() {
@@ -109,7 +103,7 @@ public class Board {
         }
     }
 
-    private List<Cell> movingShapeCells() {
+    public List<Cell> movingShapeCells() {
         return mapper.shapeCellsAsList();
     }
 
@@ -144,16 +138,16 @@ public class Board {
     private Cell[][] rotateCells(Rotation rotation) {
         rotators.get(rotation).rotate();
 
-        return mapper.mapNewShapeToBoardCells();
+        return mapper.newMapOfCellsForNewShape();
     }
 
-    public class ShapeCellBoardMapper {
+    public class ShapeLayoutToBoardCellMapper {
 
         public Shape shape;
         Cell[][] shapeCells;
-        int zeroIndexRow, zeroIndexColumn;//cell at (0,0) of the shape matrix
+        int zeroIndexRow, zeroIndexColumn;//board cell at (0,0) of the shape matrix
 
-        ShapeCellBoardMapper(Shape shape) {
+        ShapeLayoutToBoardCellMapper(Shape shape) {
             this.shape = shape;
             shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
         }
@@ -163,11 +157,11 @@ public class Board {
             zeroIndexRow = startRow;
             zeroIndexColumn = startCol;
 
-            eachCell(shape.getCells(), new ArrayCellCallback() {
+            eachCell(shape.getLayoutArray(), new ArrayCellCallback() {
                 @Override
                 public void cell(int row, int col) {
                     newShapeCells[row][col] =
-                            shape.getCells()[row][col] == 0 ?
+                            shape.getLayoutArray()[row][col] == 0 ?
                                     null :
                                     getCell(startRow + row, startCol + col).setPopulated(shape);
                 }
@@ -214,7 +208,7 @@ public class Board {
             return zeroIndexRow;
         }
 
-        private Cell[][] mapNewShapeToBoardCells() {
+        private Cell[][] newMapOfCellsForNewShape() {
             return boardCellsForNewShape(startingBoardRow(), startingBoardColumn());
         }
 
@@ -223,7 +217,6 @@ public class Board {
             setAllCells(newShapeCells, true);
             shapeCells = newShapeCells;
         }
-
 
         private void setAllCells(final Cell[][] cells, final boolean populated) {
             eachCell(cells, new ArrayCellCallback() {
@@ -262,10 +255,6 @@ public class Board {
         return rows;
     }
 
-    Board getBoard() {
-        return this;
-    }
-
     private void createBoardCells(int rows, int columns) {
         boardCells = new Cell[rows][columns];
         eachCell(boardCells, new ArrayCellCallback() {
@@ -274,5 +263,13 @@ public class Board {
                 boardCells[row][col] = (new Cell(row, col));
             }
         });
+    }
+
+    public boolean gameOver() {
+        return gameOver;
+    }
+
+    public int[][] movingShapeLayoutArray(){
+        return mapper.shape.getLayoutArray();
     }
 }

@@ -9,7 +9,10 @@ public class RandomShapeGenerator {
     enum Shapes {
         square{Shape getShape(){return new Square();}},
         l{Shape getShape(){return new LShape();}},
-        xl {Shape getShape(){return new XLShape();}};
+        xl {Shape getShape(){return new XLShape();}},
+        z{Shape getShape() {return new ZShape();}},
+        xz{Shape getShape() {return new XZShape();}},
+        bar{Shape getShape() {return new Bar();}};
 
         abstract Shape getShape();
     }

@@ -17,7 +17,7 @@ public abstract class Shape {
 
     public abstract Color getColour();
 
-    public int[][] getCells() {
+    public int[][] getLayoutArray() {
         return cells;
     }
 }

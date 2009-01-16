@@ -14,6 +14,7 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
 
     private Board board;
 
+    //default constructor for tests
     AbstractBoardShapeRotator() {
     }
 
@@ -22,9 +23,11 @@ public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
     }
 
     public void rotate() {
-        int[][] currentMatrix = board.mapper.shape.getCells();
-        List<Cell> shapeCells = board.mapper.shapeCellsAsList();
+        int[][] currentMatrix = board.movingShapeLayoutArray();
+        List<Cell> shapeCells = board.movingShapeCells();
+
         int[][] newMatrix = getRotatedMatrix(currentMatrix);
+        
         if (!shapeWillRotateOffBoard(currentMatrix, shapeCells, newMatrix) &&
                 !rotatedShapeWillOccupyAPopulatedCell(newMatrix)) {
             rotateShape(currentMatrix, newMatrix);
