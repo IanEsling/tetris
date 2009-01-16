@@ -17,7 +17,7 @@ public class RandomShapeGenerator {
         abstract Shape getShape();
     }
 
-    public static Shape getNewShapeAtRandom() {
+    public Shape getNewShapeAtRandom() {
         return Shapes.values()[randomShapeIndex()].getShape();
     }
 

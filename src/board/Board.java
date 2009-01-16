@@ -3,7 +3,7 @@ package board;
 import static board.Movement.*;
 import static board.Rotation.AntiClockwise;
 import static board.Rotation.Clockwise;
-import static shapes.RandomShapeGenerator.getNewShapeAtRandom;
+import shapes.RandomShapeGenerator;
 import shapes.Shape;
 import util.ArrayCellCallback;
 import static util.Util.eachCell;
@@ -28,12 +28,15 @@ public class Board {
     private boolean gameOver = false;
     private final RotatorFactory rotators;
     private MovementValidator movementValidator;
+    private Shape nextShape;
+    private RandomShapeGenerator randomShapeGenerator;
 
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
         rotators = new RotatorFactory(this);
         movementValidator = new ShapeMovementValidator(this);
+        randomShapeGenerator = new RandomShapeGenerator();
         createBoardCells(rows, columns);
     }
 
@@ -116,7 +119,9 @@ public class Board {
     }
 
     public void addNewShapeAtRandom() {
-        addNewShape(getNewShapeAtRandom());
+        if (nextShape == null) nextShape = randomShapeGenerator.getNewShapeAtRandom();
+        addNewShape(nextShape);
+        nextShape = randomShapeGenerator.getNewShapeAtRandom();
     }
 
     public boolean movingShapeCanMoveDown() {
@@ -139,6 +144,10 @@ public class Board {
         rotators.get(rotation).rotate();
 
         return mapper.newMapOfCellsForNewShape();
+    }
+
+    public Shape getNextShape() {
+        return nextShape;
     }
 
     public class ShapeLayoutToBoardCellMapper {
@@ -269,7 +278,11 @@ public class Board {
         return gameOver;
     }
 
-    public int[][] movingShapeLayoutArray(){
+    public int[][] movingShapeLayoutArray() {
         return mapper.shape.getLayoutArray();
+    }
+
+    public void setRandomShapeGenerator(RandomShapeGenerator rsg){
+        this.randomShapeGenerator = rsg;
     }
 }

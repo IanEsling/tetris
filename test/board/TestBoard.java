@@ -1,26 +1,60 @@
 package board;
 
+import static board.Movement.Left;
+import static board.Movement.Right;
 import static junit.framework.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
-import shapes.LShape;
-import shapes.Shape;
-import shapes.Square;
+import shapes.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import static board.Movement.Left;
-import static board.Movement.*;
+import java.util.Map;
 
 public class TestBoard {
 
     Board testee;
+    Integer index;
 
     @Before
     public void createBoard() {
         testee = new Board(30, 10);//30 rows, 10 columns
+        index = 0;
     }
+
+    @Test
+    public void knowWhichShapeIsComingNext() {
+        NonRandomShapeGenerator testRsg = new NonRandomShapeGenerator();
+        Shape square = new Square();
+        Shape lShape = new LShape();
+        Shape bar = new Bar();
+        testRsg.put(0, square);
+        testRsg.put(1, lShape);
+        testRsg.put(2, bar);
+        testee.setRandomShapeGenerator(testRsg);
+        testee.addNewShapeAtRandom();
+        assertTrue("square should be on board", testee.mapper.getShape() == square);
+        assertTrue("lshape should be coming next", testee.getNextShape() == lShape);
+        moveShapeToBottom();
+        assertTrue("lshape should be on board", testee.mapper.getShape() == lShape);
+        assertTrue("bar should be next", testee.getNextShape() == bar);
+    }
+
+    class NonRandomShapeGenerator extends RandomShapeGenerator {
+        Integer index = 0;
+        Map<Integer, Shape> shapes = new HashMap<Integer, Shape>();
+
+        void put(Integer index, Shape shape){
+            shapes.put(index, shape);
+        }
+
+        @Override
+        public Shape getNewShapeAtRandom() {
+            return shapes.get(index++);
+        }
+    }
+
 
     @Test
     public void completeRowOnlyRemovedWhenShapeHasStoppedMoving() {
@@ -55,13 +89,12 @@ public class TestBoard {
         testee.tick();
         assertRowPopulation(26, false);
         assertRowPopulation(27, false);
-        for (Cell cell : testee.getBoardCells()){
-            if (cell.row == 28 || cell.row == 29){
-                if (cell.column == 4 || cell.column == 5){
-                    assertFalse("bottom cell not empty as expected: "+populatedCells(), cell.isPopulated());
-                }
-                else {
-                    assertTrue("bottom cell not populated as expected: "+populatedCells(), cell.isPopulated());
+        for (Cell cell : testee.getBoardCells()) {
+            if (cell.row == 28 || cell.row == 29) {
+                if (cell.column == 4 || cell.column == 5) {
+                    assertFalse("bottom cell not empty as expected: " + populatedCells(), cell.isPopulated());
+                } else {
+                    assertTrue("bottom cell not populated as expected: " + populatedCells(), cell.isPopulated());
                 }
             }
         }
@@ -69,7 +102,7 @@ public class TestBoard {
 
     private void assertRowPopulation(int row, boolean populated) {
         for (Cell cell : testee.getBoardCells()) {
-            if (cell.row == row) assertTrue("row "+row+" not populated: "+populatedCells(),
+            if (cell.row == row) assertTrue("row " + row + " not populated: " + populatedCells(),
                     populated ? cell.isPopulated() : !cell.isPopulated());
         }
     }
@@ -136,10 +169,10 @@ public class TestBoard {
     }
 
     private void moveSidewaysThenToBottom(int colsToMove) {
-        Movement movement = colsToMove>0? Right: Left;
+        Movement movement = colsToMove > 0 ? Right : Left;
 
         for (int i = 0; i < Math.abs(colsToMove); i++) {
-            testee.move(movement);
+            testee.moveShape(movement);
         }
 
         moveShapeToBottom();

@@ -23,8 +23,9 @@ public class TestRandomShapeGenerator {
 
     @Test
     public void randomShapeGeneration() {
+        RandomShapeGenerator rsg = new RandomShapeGenerator();
         for (int i = 0; i < 1000; i++) {
-            Shape newShape = RandomShapeGenerator.getNewShapeAtRandom();
+            Shape newShape = rsg.getNewShapeAtRandom();
             for (Shape shape : shapeCount.keySet()) {
                 if (newShape.getClass().getName().equals(shape.getClass().getName())) {
                     Integer count = shapeCount.get(shape);

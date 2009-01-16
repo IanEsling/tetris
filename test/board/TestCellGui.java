@@ -33,7 +33,7 @@ public class TestCellGui {
         BoardGui board = new BoardGui(30, 10);
         board.addNewShape(new LShape());
         board.getBoard().rotateShapeAntiClockwise();
-        int[][] cells = board.getBoard().mapper.getShape().getCells();
+        int[][] cells = board.getBoard().mapper.getShape().getLayoutArray();
         for (int row = 0; row < cells.length; row++) {
             for (int col = 0; col < cells[0].length; col++) {
                 if (cells[row][col] == 0) {
