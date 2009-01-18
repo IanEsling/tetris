@@ -12,19 +12,17 @@ import java.util.List;
 public class ShapeLayoutToBoardCellMapper {
 
     Board board;
-    public Shape shape;
+    Shape shape;
 
-    private final RotatorFactory rotators;
-    private MovementValidator movementValidator;
-    private ShapeRotationValidator rotationValidator;
+    final RotatorFactory rotators;
+    ShapeCellValidators validators;
     Cell[][] shapeCells;
-    int zeroIndexRow, zeroIndexColumn;//board cell at (0,0) of the shape matrix
+    int zeroIndexRow, zeroIndexColumn;//board cell at (0,0) of the shape layout matrix
 
     public ShapeLayoutToBoardCellMapper(Board board) {
         this.board = board;
         rotators = new RotatorFactory();
-        movementValidator = new ShapeMovementValidator(this);
-        rotationValidator = new ShapeRotationValidator(this);
+        validators = new ShapeCellValidators(this);
     }
 
     public void setNewShape(Shape shape) {
@@ -50,7 +48,7 @@ public class ShapeLayoutToBoardCellMapper {
     }
 
     void moveShapeCells(final Movement movement) {
-        if (canMove(movement)) {
+        if (valid(movement)) {
             setAllCells(shapeCells, false);
             zeroIndexColumn += movement.getColumnChange();
             zeroIndexRow += movement.getRowChange();
@@ -82,14 +80,6 @@ public class ShapeLayoutToBoardCellMapper {
         return cellList;
     }
 
-    public int startingBoardColumn() {
-        return zeroIndexColumn;
-    }
-
-    public int startingBoardRow() {
-        return zeroIndexRow;
-    }
-
     Cell[][] getBoardCellsForNewShape() {
         return boardCellsForNewShape(startingBoardRow(), startingBoardColumn());
     }
@@ -111,15 +101,10 @@ public class ShapeLayoutToBoardCellMapper {
         });
     }
 
-    public Shape getShape() {
-        return shape;
-    }
-
     public void rotateShape(Rotation rotation) {
-        int[][] newShapeLayoutArray = rotators.rotate(rotation, shape.getLayoutArray());
 
-        if (rotationValidator.isValidRotation(newShapeLayoutArray)) {
-            setNewShapeLayout(newShapeLayoutArray);
+        if (valid(rotation)) {
+            setNewShapeLayout(getRotatedShapeLayout(rotation));
 
             setNewShapeCells(getBoardCellsForNewShape());
         }
@@ -137,13 +122,32 @@ public class ShapeLayoutToBoardCellMapper {
         });
     }
 
-    boolean canMove(Movement movement) {
-        return movementValidator.canMove(movement);
+    int[][] getRotatedShapeLayout(Rotation rotation) {
+        return rotators.rotate(rotation, shape.getLayoutArray());
     }
 
+    boolean valid(Movement movement) {
+        return validators.isValid(movement);
+    }
+
+    boolean valid(Rotation rotation) {
+        return validators.isValid(rotation);
+    }
+
+    public Shape getShape() {
+        return shape;
+    }
 
     Cell boardCellAt(int row, int col) {
         return board.getCell(boardRow(row), boardCol(col));
+    }
+
+    public int startingBoardColumn() {
+        return zeroIndexColumn;
+    }
+
+    public int startingBoardRow() {
+        return zeroIndexRow;
     }
 
 

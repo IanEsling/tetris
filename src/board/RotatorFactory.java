@@ -1,8 +1,8 @@
 package board;
 
-import shapes.Rotator;
-import shapes.ClockwiseRotator;
-import shapes.AntiClockwiseRotator;
+import util.Rotator;
+import util.ClockwiseRotator;
+import util.AntiClockwiseRotator;
 
 /**
  */

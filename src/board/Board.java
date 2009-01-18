@@ -16,8 +16,7 @@ import java.util.List;
 /**
  */
 public class Board {
-    private final int rows;
-    private final int columns;
+    private final int rows, columns;
     private Cell[][] boardCells;
     public ShapeLayoutToBoardCellMapper mapper;
     public static final int START_ROW = 0;
@@ -26,7 +25,6 @@ public class Board {
     private static final int END_COL = 6;
     public static final Color DEFAULT_EMPTY_COLOUR = Color.gray;
     private boolean gameOver = false;
-
 
     private Shape nextShape;
     private RandomShapeGenerator randomShapeGenerator;
@@ -79,11 +77,11 @@ public class Board {
 
     private void removeCompletedRows() {
         for (int row = 0; row < rows; row++) {
-            boolean complete = true;
+            boolean rowComplete = true;
             for (Cell cell : cellsInRow(row)) {
-                if (!cell.isPopulated()) complete = false;
+                if (!cell.isPopulated()) rowComplete = false;
             }
-            if (complete) {
+            if (rowComplete) {
                 removeRow(row);
             }
         }
@@ -126,7 +124,7 @@ public class Board {
     }
 
     public boolean movingShapeCanMoveDown() {
-        return mapper.canMove(Down);
+        return mapper.valid(Down);
     }
 
     public void rotateShapeClockwise() {
