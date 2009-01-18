@@ -26,18 +26,20 @@ public class Board {
     private static final int END_COL = 6;
     public static final Color DEFAULT_EMPTY_COLOUR = Color.gray;
     private boolean gameOver = false;
-    private final RotatorFactory rotators;
-    private MovementValidator movementValidator;
+
+
     private Shape nextShape;
     private RandomShapeGenerator randomShapeGenerator;
 
     public Board(int rows, int columns) {
         this.rows = rows;
         this.columns = columns;
-        rotators = new RotatorFactory(this);
-        movementValidator = new ShapeMovementValidator(this);
+
+        mapper = new ShapeLayoutToBoardCellMapper(this);
+
         randomShapeGenerator = new RandomShapeGenerator();
         createBoardCells(rows, columns);
+        setNextShape();
     }
 
     public void moveShapeToRight() {
@@ -49,15 +51,11 @@ public class Board {
     }
 
     synchronized void moveShape(Movement movement) {
-        if (canMove(movement)) mapper.moveShapeCells(movement);
-    }
-
-    boolean canMove(Movement movement) {
-        return movementValidator.canMove(movement);
+        mapper.moveShapeCells(movement);
     }
 
     public void addNewShape(Shape shape) {
-        if (canAddNewShape()) mapper = new ShapeLayoutToBoardCellMapper(shape);
+        if (canAddNewShape()) mapper.setNewShape(shape);
         else
             gameOver = true;
     }
@@ -119,13 +117,16 @@ public class Board {
     }
 
     public void addNewShapeAtRandom() {
-        if (nextShape == null) nextShape = randomShapeGenerator.getNewShapeAtRandom();
         addNewShape(nextShape);
+        setNextShape();
+    }
+
+    private void setNextShape() {
         nextShape = randomShapeGenerator.getNewShapeAtRandom();
     }
 
     public boolean movingShapeCanMoveDown() {
-        return canMove(Down);
+        return mapper.canMove(Down);
     }
 
     public void rotateShapeClockwise() {
@@ -137,110 +138,11 @@ public class Board {
     }
 
     public void rotate(Rotation rotation) {
-        mapper.setNewShapeCells(rotateCells(rotation));
-    }
-
-    private Cell[][] rotateCells(Rotation rotation) {
-        rotators.get(rotation).rotate();
-
-        return mapper.newMapOfCellsForNewShape();
+        mapper.rotateShape(rotation);
     }
 
     public Shape getNextShape() {
         return nextShape;
-    }
-
-    public class ShapeLayoutToBoardCellMapper {
-
-        public Shape shape;
-        Cell[][] shapeCells;
-        int zeroIndexRow, zeroIndexColumn;//board cell at (0,0) of the shape matrix
-
-        ShapeLayoutToBoardCellMapper(Shape shape) {
-            this.shape = shape;
-            shapeCells = boardCellsForNewShape(Board.START_ROW, Board.START_COL);
-        }
-
-        private Cell[][] boardCellsForNewShape(final int startRow, final int startCol) {
-            final Cell[][] newShapeCells = new Cell[4][4];
-            zeroIndexRow = startRow;
-            zeroIndexColumn = startCol;
-
-            eachCell(shape.getLayoutArray(), new ArrayCellCallback() {
-                @Override
-                public void cell(int row, int col) {
-                    newShapeCells[row][col] =
-                            shape.getLayoutArray()[row][col] == 0 ?
-                                    null :
-                                    getCell(startRow + row, startCol + col).setPopulated(shape);
-                }
-            });
-            return newShapeCells;
-        }
-
-        private void moveShapeCells(final Movement movement) {
-            setAllCells(shapeCells, false);
-            zeroIndexColumn += movement.getColumnChange();
-            zeroIndexRow += movement.getRowChange();
-
-            eachCell(shapeCells, new ArrayCellCallback() {
-                @Override
-                public void cell(int row, int col) {
-                    shapeCells[row][col] = cellInNewPosition(movement, shapeCells[row][col]);
-                }
-            });
-        }
-
-        private Cell cellInNewPosition(Movement movement, Cell cell) {
-            if (cell != null) {
-                return getCell(cell.row + movement.getRowChange(),
-                        cell.column + movement.getColumnChange()).setPopulated(shape);
-            }
-            return cell;
-        }
-
-        public List<Cell> shapeCellsAsList() {
-            List<Cell> cellList = new ArrayList<Cell>();
-            for (Cell[] cells : shapeCells) {
-                for (Cell cell : cells) {
-                    if (cell != null) cellList.add(cell);
-                }
-            }
-            return cellList;
-        }
-
-        public int startingBoardColumn() {
-            return zeroIndexColumn;
-        }
-
-        public int startingBoardRow() {
-            return zeroIndexRow;
-        }
-
-        private Cell[][] newMapOfCellsForNewShape() {
-            return boardCellsForNewShape(startingBoardRow(), startingBoardColumn());
-        }
-
-        private void setNewShapeCells(Cell[][] newShapeCells) {
-            setAllCells(shapeCells, false);
-            setAllCells(newShapeCells, true);
-            shapeCells = newShapeCells;
-        }
-
-        private void setAllCells(final Cell[][] cells, final boolean populated) {
-            eachCell(cells, new ArrayCellCallback() {
-                @Override
-                public void cell(int row, int col) {
-                    if (cells[row][col] != null) {
-                        cells[row][col].setPopulated(populated, shape);
-                    }
-                }
-            });
-        }
-
-        public Shape getShape() {
-            return shape;
-        }
     }
 
     public List<Cell> getBoardCells() {

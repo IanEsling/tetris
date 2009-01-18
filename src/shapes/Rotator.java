@@ -6,6 +6,6 @@ import java.util.List;
 
 /**
  */
-public interface BoardShapeRotator {
+public interface Rotator {
     void rotate();
 }

@@ -4,11 +4,11 @@ import board.Board;
 
 /**
  */
-public class AntiClockwiseBoardShapeRotator extends AbstractBoardShapeRotator {
+public class AntiClockwiseRotator extends AbstractRotator {
 
-    public AntiClockwiseBoardShapeRotator(){}
+    public AntiClockwiseRotator(){}
     
-    public AntiClockwiseBoardShapeRotator(Board board) {
+    public AntiClockwiseRotator(Board board) {
         super(board);
     }
 

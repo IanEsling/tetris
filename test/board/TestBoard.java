@@ -26,14 +26,12 @@ public class TestBoard {
     @Test
     public void knowWhichShapeIsComingNext() {
         NonRandomShapeGenerator testRsg = new NonRandomShapeGenerator();
-        Shape square = new Square();
-        Shape lShape = new LShape();
-        Shape bar = new Bar();
-        testRsg.put(0, square);
-        testRsg.put(1, lShape);
-        testRsg.put(2, bar);
+        Shape square = testRsg.put(0, new Square());
+        Shape lShape = testRsg.put(1, new LShape());
+        Shape bar = testRsg.put(2, new Bar());
         testee.setRandomShapeGenerator(testRsg);
         testee.addNewShapeAtRandom();
+        moveShapeToBottom();
         assertTrue("square should be on board", testee.mapper.getShape() == square);
         assertTrue("lshape should be coming next", testee.getNextShape() == lShape);
         moveShapeToBottom();
@@ -45,8 +43,9 @@ public class TestBoard {
         Integer index = 0;
         Map<Integer, Shape> shapes = new HashMap<Integer, Shape>();
 
-        void put(Integer index, Shape shape){
+        Shape put(Integer index, Shape shape){
             shapes.put(index, shape);
+            return shape;
         }
 
         @Override

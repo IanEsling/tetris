@@ -10,22 +10,21 @@ import util.ArrayCellCallback;
 
 /**
  */
-public abstract class AbstractBoardShapeRotator implements BoardShapeRotator {
+public abstract class AbstractRotator implements Rotator {
 
     private Board board;
 
     //default constructor for tests
-    AbstractBoardShapeRotator() {
+    AbstractRotator() {
     }
 
-    AbstractBoardShapeRotator(Board board) {
+    AbstractRotator(Board board) {
         this.board = board;
     }
 
     public void rotate() {
         int[][] currentMatrix = board.movingShapeLayoutArray();
         List<Cell> shapeCells = board.movingShapeCells();
-
         int[][] newMatrix = getRotatedMatrix(currentMatrix);
         
         if (!shapeWillRotateOffBoard(currentMatrix, shapeCells, newMatrix) &&

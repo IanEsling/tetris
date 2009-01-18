@@ -1,21 +1,21 @@
 package board;
 
-import shapes.BoardShapeRotator;
-import shapes.ClockwiseBoardShapeRotator;
-import shapes.AntiClockwiseBoardShapeRotator;
+import shapes.Rotator;
+import shapes.ClockwiseRotator;
+import shapes.AntiClockwiseRotator;
 
 /**
  */
 class RotatorFactory {
-    final BoardShapeRotator clockwiseBoardShapeRotator;
-    final BoardShapeRotator antiClockwiseBoardShapeRotator;
+    final Rotator clockwiseRotator;
+    final Rotator antiClockwiseRotator;
 
     RotatorFactory(Board board) {
-        clockwiseBoardShapeRotator = new ClockwiseBoardShapeRotator(board);
-        antiClockwiseBoardShapeRotator = new AntiClockwiseBoardShapeRotator(board);
+        clockwiseRotator = new ClockwiseRotator(board);
+        antiClockwiseRotator = new AntiClockwiseRotator(board);
     }
 
-    BoardShapeRotator get(Rotation rotation) {
-        return rotation == Rotation.AntiClockwise ? antiClockwiseBoardShapeRotator : clockwiseBoardShapeRotator;
+    Rotator get(Rotation rotation) {
+        return rotation == Rotation.AntiClockwise ? antiClockwiseRotator : clockwiseRotator;
     }
 }

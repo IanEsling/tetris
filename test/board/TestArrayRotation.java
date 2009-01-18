@@ -2,8 +2,8 @@ package board;
 
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
-import shapes.AntiClockwiseBoardShapeRotator;
-import shapes.ClockwiseBoardShapeRotator;
+import shapes.AntiClockwiseRotator;
+import shapes.ClockwiseRotator;
 
 import java.util.Arrays;
 
@@ -29,7 +29,7 @@ public class TestArrayRotation {
     }
 
     private int[][] rotateClockwise(int[][] matrix) {
-        ClockwiseBoardShapeRotator rotator = new ClockwiseBoardShapeRotator();
+        ClockwiseRotator rotator = new ClockwiseRotator();
         return rotator.getRotatedMatrix(matrix);
     }
 
@@ -67,7 +67,7 @@ public class TestArrayRotation {
     }
 
     private int[][] rotateAntiClockwise(int[][] matrix) {
-        AntiClockwiseBoardShapeRotator rotator = new AntiClockwiseBoardShapeRotator();
+        AntiClockwiseRotator rotator = new AntiClockwiseRotator();
         return rotator.getRotatedMatrix(matrix);
     }
 
@@ -78,7 +78,7 @@ public class TestArrayRotation {
                 temp[row][col] = matrix[row][col] == null ? 0 : 1;
             }
         }
-        AntiClockwiseBoardShapeRotator rotator = new AntiClockwiseBoardShapeRotator();
+        AntiClockwiseRotator rotator = new AntiClockwiseRotator();
         temp = rotator.getRotatedMatrix(temp);
         int startRow = startX(matrix);
         int startCol = startY(matrix);
