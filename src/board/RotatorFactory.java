@@ -10,9 +10,13 @@ class RotatorFactory {
     final Rotator clockwiseRotator;
     final Rotator antiClockwiseRotator;
 
-    RotatorFactory(Board board) {
-        clockwiseRotator = new ClockwiseRotator(board);
-        antiClockwiseRotator = new AntiClockwiseRotator(board);
+    RotatorFactory() {
+        clockwiseRotator = new ClockwiseRotator();
+        antiClockwiseRotator = new AntiClockwiseRotator();
+    }
+
+    int[][] rotate(Rotation rotation, int[][] rotateMe){
+        return get(rotation).rotate(rotateMe); 
     }
 
     Rotator get(Rotation rotation) {

@@ -7,5 +7,5 @@ import java.util.List;
 /**
  */
 public interface Rotator {
-    void rotate();
+    int[][] rotate(int[][] rotateMe);
 }

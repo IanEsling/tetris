@@ -16,13 +16,15 @@ public class ShapeLayoutToBoardCellMapper {
 
     private final RotatorFactory rotators;
     private MovementValidator movementValidator;
+    private ShapeRotationValidator rotationValidator;
     Cell[][] shapeCells;
     int zeroIndexRow, zeroIndexColumn;//board cell at (0,0) of the shape matrix
 
     public ShapeLayoutToBoardCellMapper(Board board) {
         this.board = board;
-        rotators = new RotatorFactory(board);
-        movementValidator = new ShapeMovementValidator(board);
+        rotators = new RotatorFactory();
+        movementValidator = new ShapeMovementValidator(this);
+        rotationValidator = new ShapeRotationValidator(this);
     }
 
     public void setNewShape(Shape shape) {
@@ -88,7 +90,7 @@ public class ShapeLayoutToBoardCellMapper {
         return zeroIndexRow;
     }
 
-    Cell[][] newMapOfCellsForNewShape() {
+    Cell[][] getBoardCellsForNewShape() {
         return boardCellsForNewShape(startingBoardRow(), startingBoardColumn());
     }
 
@@ -114,12 +116,58 @@ public class ShapeLayoutToBoardCellMapper {
     }
 
     public void rotateShape(Rotation rotation) {
-        rotators.get(rotation).rotate();
+        int[][] newShapeLayoutArray = rotators.rotate(rotation, shape.getLayoutArray());
 
-        setNewShapeCells(newMapOfCellsForNewShape());
+        if (rotationValidator.isValidRotation(newShapeLayoutArray)) {
+            setNewShapeLayout(newShapeLayoutArray);
+
+            setNewShapeCells(getBoardCellsForNewShape());
+        }
+
+    }
+
+    private void setNewShapeLayout(final int[][] newShapeMatrix) {
+
+        final int[][] currentMatrix = shape.getLayoutArray();
+        eachCell(currentMatrix, new ArrayCellCallback() {
+            @Override
+            public void cell(int row, int col) {
+                currentMatrix[row][col] = newShapeMatrix[row][col];
+            }
+        });
     }
 
     boolean canMove(Movement movement) {
         return movementValidator.canMove(movement);
+    }
+
+
+    Cell boardCellAt(int row, int col) {
+        return board.getCell(boardRow(row), boardCol(col));
+    }
+
+
+    private int boardCol(int col) {
+        return (startingBoardColumn() + col) >= board.getColumns() ?
+                board.getColumns() - 1 :
+                (startingBoardColumn() + col) < 0 ?
+                        0 :
+                        startingBoardColumn() + col;
+    }
+
+    private int boardRow(int row) {
+        return (startingBoardRow() + row) >= board.getRows() ?
+                board.getRows() - 1 :
+                (startingBoardRow() + row) < 0 ?
+                        0 :
+                        startingBoardRow() + row;
+    }
+
+    public int totalBoardRows() {
+        return board.getRows();
+    }
+
+    int totalBoardColumns() {
+        return board.getColumns();
     }
 }
