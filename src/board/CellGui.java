@@ -7,12 +7,12 @@ import java.awt.*;
 
 /**
  */
-class CellGui extends JPanel {
+public class CellGui extends JPanel {
 
     private final Cell cell;
     public final static int CELL_SIZE = 100;
 
-    CellGui(Cell cell) {
+    public CellGui(Cell cell) {
         this.cell = cell;
         setBackground(Board.DEFAULT_EMPTY_COLOUR);
         setBorder(new LineBorder(Color.black));

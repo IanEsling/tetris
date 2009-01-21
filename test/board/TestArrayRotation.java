@@ -2,8 +2,8 @@ package board;
 
 import static org.junit.Assert.assertArrayEquals;
 import org.junit.Test;
-import shapes.AntiClockwiseRotator;
-import shapes.ClockwiseRotator;
+import util.AntiClockwiseRotator;
+import util.ClockwiseRotator;
 
 import java.util.Arrays;
 

@@ -6,7 +6,6 @@ public abstract class AbstractRotator implements Rotator {
 
     public int[][] rotate(int[][] rotateMe) {
         return getRotatedMatrix(rotateMe);
-
     }
 
     @SuppressWarnings({"UnusedDeclaration"})

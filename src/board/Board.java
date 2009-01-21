@@ -25,7 +25,7 @@ public class Board {
     private static final int END_COL = 6;
     public static final Color DEFAULT_EMPTY_COLOUR = Color.gray;
     private boolean gameOver = false;
-
+    private List<TickListener> tickListeners;
     private Shape nextShape;
     private RandomShapeGenerator randomShapeGenerator;
 
@@ -34,10 +34,14 @@ public class Board {
         this.columns = columns;
 
         mapper = new ShapeLayoutToBoardCellMapper(this);
-
+        tickListeners = new ArrayList<TickListener>();
         randomShapeGenerator = new RandomShapeGenerator();
         createBoardCells(rows, columns);
         setNextShape();
+    }
+
+    public void addTickListener(TickListener listener){
+        tickListeners.add(listener);
     }
 
     public void moveShapeToRight() {
@@ -73,6 +77,9 @@ public class Board {
             removeCompletedRows();
         }
         moveShape(Down);
+        for (TickListener listener : tickListeners){
+            listener.boardHasTicked();
+        }
     }
 
     private void removeCompletedRows() {

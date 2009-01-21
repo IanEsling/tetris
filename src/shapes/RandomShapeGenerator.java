@@ -12,6 +12,7 @@ public class RandomShapeGenerator {
         xl {Shape getShape(){return new XLShape();}},
         z{Shape getShape() {return new ZShape();}},
         xz{Shape getShape() {return new XZShape();}},
+        t{Shape getShape() {return new TShape();}},
         bar{Shape getShape() {return new Bar();}};
 
         abstract Shape getShape();

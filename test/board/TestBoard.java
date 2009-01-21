@@ -24,6 +24,23 @@ public class TestBoard {
     }
 
     @Test
+    public void tickListener(){
+        final List<String> ticks = new ArrayList<String>();
+        testee.addTickListener(new TickListener(){
+            public void boardHasTicked(){
+                ticks.add("Heard Board Tick");
+            }
+        });
+        testee.addNewShapeAtRandom();
+        testee.tick();
+        assertEquals("listener didn't hear tick", 1, ticks.size());
+        testee.tick();
+        testee.tick();
+        testee.tick();
+        assertEquals("listener didn't hear tick", 4, ticks.size());
+    }
+
+    @Test
     public void knowWhichShapeIsComingNext() {
         NonRandomShapeGenerator testRsg = new NonRandomShapeGenerator();
         Shape square = testRsg.put(0, new Square());
